@@ -1,0 +1,11 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "lynx-ix.github",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "lynx-ix.github",
+  "start_url": "/",
+  "theme_color": "#ffffff"
+}
