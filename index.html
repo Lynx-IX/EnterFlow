@@ -4374,11 +4374,17 @@ function renderListView(due){
       grp.dataset.subId = sub.id;
       grp.dataset.sec = sec.id;
 
+      // Restore collapsed state if it was previously collapsed
+      const isCollapsed = !!_subsectionCollapsed[sub.id];
+      if (isCollapsed) {
+        grp.classList.add('collapsed');
+      }
+
       grp.innerHTML = `<div class="subsection-header">
         <span>${sub.emoji || '📁'}</span>
         <span class="sub-name-label">${sub.name}</span>
         <button class="sub-gear-btn" title="Options">⚙</button>
-        <button class="sub-collapse-btn" title="Collapse">▾</button>
+        <button class="sub-collapse-btn${isCollapsed ? ' open' : ''}" title="Collapse">▾</button>
       </div>
       <div class="sub-actions-panel" style="display:none">
         <button class="btn sm sub-action-move" data-dir="up">↑ Move up</button>
@@ -4394,12 +4400,14 @@ function renderListView(due){
       grp.querySelector('.subsection-header').addEventListener('click', (ev) => {
         if (ev.target.closest('.sub-collapse-btn') || ev.target.closest('.sub-gear-btn')) return;
         grp.classList.toggle('collapsed');
+        _subsectionCollapsed[sub.id] = grp.classList.contains('collapsed');
         collapseBtn.classList.toggle('open', grp.classList.contains('collapsed'));
       });
 
       collapseBtn.addEventListener('click', (ev) => {
         ev.stopPropagation();
         grp.classList.toggle('collapsed');
+        _subsectionCollapsed[sub.id] = grp.classList.contains('collapsed');
         collapseBtn.classList.toggle('open', grp.classList.contains('collapsed'));
       });
 
@@ -4657,6 +4665,9 @@ function moveBlock(blockId, dir) {
       _reopenGearAfterMove(blockId);
     } else {
       renderDash();
+      if (document.getElementById('ob-blocks')?.classList.contains('active')) {
+        renderObBlocks();
+      }
       _reopenGearAfterMove(blockId);
     }
     return;
@@ -4679,6 +4690,9 @@ function moveBlock(blockId, dir) {
     subBlocks[swapIdx].order = tmp;
     save();
     renderDash();
+    if (document.getElementById('ob-blocks')?.classList.contains('active')) {
+      renderObBlocks();
+    }
     _reopenGearAfterMove(blockId);
     return;
   }
@@ -4711,6 +4725,9 @@ function moveBlock(blockId, dir) {
     block.subsectionId = null;
     save();
     renderDash();
+    if (document.getElementById('ob-blocks')?.classList.contains('active')) {
+      renderObBlocks();
+    }
     _reopenGearAfterMove(blockId);
     return;
   }
@@ -4720,20 +4737,26 @@ function moveBlock(blockId, dir) {
   all[swapIdx].ref.sectionOrder = tmp;
   save();
   renderDash();
+  if (document.getElementById('ob-blocks')?.classList.contains('active')) {
+    renderObBlocks();
+  }
   _reopenGearAfterMove(blockId);
 }
 
 function _reopenGearAfterMove(blockId) {
+  // Double RAF to ensure DOM is fully updated after render
   requestAnimationFrame(() => {
-    // Try manage-row, cal-modal-row, then fallback to data-id selector
-    const row = document.getElementById('manage-row-' + blockId)
-             || document.getElementById('cal-modal-row-' + blockId)
-             || document.querySelector(`.block-row[data-id="${blockId}"]`);
-    if (!row) return;
-    const panel = row.querySelector('.blk-actions-panel, .manage-blk-actions');
-    const gearBtn = row.querySelector('.blk-gear-btn');
-    if (panel) panel.style.display = '';
-    if (gearBtn) gearBtn.classList.add('open');
+    requestAnimationFrame(() => {
+      // Try manage-row, cal-modal-row, then fallback to data-id selector
+      const row = document.getElementById('manage-row-' + blockId)
+               || document.getElementById('cal-modal-row-' + blockId)
+               || document.querySelector(`.block-row[data-id="${blockId}"]`);
+      if (!row) return;
+      const panel = row.querySelector('.blk-actions-panel, .manage-blk-actions');
+      const gearBtn = row.querySelector('.blk-gear-btn');
+      if (panel) panel.style.display = '';
+      if (gearBtn) gearBtn.classList.add('open');
+    });
   });
 }
 
@@ -6054,6 +6077,9 @@ function closeCalDayModal() {
 /* ══ COLLAPSIBLE SECTIONS ══ */
 // Track collapsed state per section id — persists across renders in memory
 const _sectionCollapsed = {};
+
+// Track collapsed state per subsection id — persists across renders in memory
+const _subsectionCollapsed = {};
 
 function toggleSection(secId) {
   _sectionCollapsed[secId] = !_sectionCollapsed[secId];
@@ -7389,14 +7415,22 @@ window.addEventListener('load', () => {
 
     // Populate the header clock immediately, then keep it updated every minute
     _tickClock();
+    let _lastRealDay = getTodayString(); // Track actual real-world day
     setInterval(() => {
       try {
         _tickClock(); // always update header clock/date
         const newDay = getTodayString();
-        if (newDay !== appState.currentDay) {
+        // Only auto-advance if REAL-WORLD day changed (midnight crossed)
+        // Don't reset if user is just browsing other dates
+        if (newDay !== _lastRealDay) {
+          const oldDay = _lastRealDay;
+          _lastRealDay = newDay;
           // Process rollover blocks from yesterday
-          _processRollovers(appState.currentDay, newDay);
-          loadDay(newDay);
+          _processRollovers(oldDay, newDay);
+          // Only auto-load the new day if user was on the old real day
+          if (appState.currentDay === oldDay) {
+            loadDay(newDay);
+          }
           save();
           if (document.getElementById('screen-dash').classList.contains('active')) renderDash();
         } else if (document.getElementById('screen-dash').classList.contains('active')) {
