@@ -5171,7 +5171,12 @@ function completeActive(){
 
   stopTimer();
 
-  const dayData=appState.days[appState.currentDay];
+  const dayKey = appState.currentDay;
+  let dayData = appState.days[dayKey];
+  if (!dayData) {
+    appState.days[dayKey] = { completed: {}, blocks: [] };
+    dayData = appState.days[dayKey];
+  }
   if(!dayData.completed) dayData.completed={};
   dayData.completed[completedId]=true;
 
@@ -5238,7 +5243,11 @@ function markDone(id){
   if(prev&&prev!==id&&!dayDone()[prev])setActive(prev);
 }
 function unmarkDone(id){
-  const dayData=appState.days[appState.currentDay];
+  let dayData=appState.days[appState.currentDay];
+  if (!dayData) {
+    appState.days[appState.currentDay] = { completed: {} };
+    dayData = appState.days[appState.currentDay];
+  }
   if(dayData?.completed) delete dayData.completed[id];
   save();renderDash();
 }
