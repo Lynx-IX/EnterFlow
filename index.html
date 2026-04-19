@@ -4786,6 +4786,7 @@ function moveBlock(blockId, dir) {
 }
 
 function _reopenGearAfterMove(blockId) {
+  console.log('_reopenGearAfterMove called for:', blockId);
   // Double RAF to ensure DOM is fully updated after render
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
@@ -4793,9 +4794,11 @@ function _reopenGearAfterMove(blockId) {
       const row = document.getElementById('manage-row-' + blockId)
                || document.getElementById('cal-modal-row-' + blockId)
                || document.querySelector(`.block-row[data-id="${blockId}"]`);
+      console.log('Found row:', row?.id);
       if (!row) return;
       const panel = row.querySelector('.blk-actions-panel, .manage-blk-actions');
       const gearBtn = row.querySelector('.blk-gear-btn');
+      console.log('Found panel:', !!panel, 'gear:', !!gearBtn);
       if (panel) panel.style.display = '';
       if (gearBtn) gearBtn.classList.add('open');
     });
