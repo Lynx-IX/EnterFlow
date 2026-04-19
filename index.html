@@ -4670,6 +4670,7 @@ function moveBlock(blockId, dir) {
     return;
   }
   console.log('Block found:', block.name, 'in section:', block.section);
+  console.log('Block details - freq:', block.freq, 'pinnedDate:', block.pinnedDate, 'subsectionId:', block.subsectionId);
   
   // Detect context by checking which parent container exists
   const manageRow = document.getElementById('manage-row-' + blockId);
@@ -4679,6 +4680,7 @@ function moveBlock(blockId, dir) {
   
   // ── Calendar items (pinnedDate blocks) — reorder within same date ──
   if (block.freq === 'once' && block.pinnedDate) {
+    console.log('Taking CALENDAR block path');
     const sameDateBlocks = blocks.filter(b => 
       b.freq === 'once' && 
       b.pinnedDate === block.pinnedDate
@@ -4718,12 +4720,14 @@ function moveBlock(blockId, dir) {
   const secId = block.section || 'morning';
 
   if (block.subsectionId) {
+    console.log('Taking SUBSECTION block path - subsectionId:', block.subsectionId);
     // ── Block inside a subsection — reorder within it ──
     // Use all blocks for Manage Blocks, only due blocks for Daily view
     const allBlocks = isManageBlocks 
       ? blocks.filter(b => b.subsectionId === block.subsectionId)
       : dayBlocks().filter(b => isDue(b, appState.currentDay) && b.subsectionId === block.subsectionId);
     const subBlocks = sortedBlocks(allBlocks);
+    console.log('subBlocks in subsection:', subBlocks.map(b => b.name));
     subBlocks.forEach((b, i) => b.order = i);
     const idx = subBlocks.findIndex(b => b.id === blockId);
     if (idx < 0) return;
@@ -4744,10 +4748,12 @@ function moveBlock(blockId, dir) {
   }
 
   // ── Loose block — move within unified section children list ──
+  console.log('Taking LOOSE block path - no subsection');
   const allBlocksForSec = isManageBlocks
     ? blocks.filter(b => _resolveSection(b) === secId)
     : dayBlocks().filter(b => isDue(b, appState.currentDay) && _resolveSection(b) === secId);
   const secBlocks = sortedBlocks(allBlocksForSec);
+  console.log('secBlocks for section', secId, ':', secBlocks.map(b => b.name));
   const subsecs = getSubsections(secId);
   const usedIds = new Set(subsecs.map(s => s.id));
   const loose = secBlocks.filter(b => !b.subsectionId || !usedIds.has(b.subsectionId));
