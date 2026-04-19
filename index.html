@@ -3679,7 +3679,15 @@ const Drag = {
     }
 
     if (secDiv && !subGrp && !blockRow) {
-      _unassignFromSubsection(this.srcId, this.context);
+      // Dropped on section header — change section AND unassign from subsection
+      if (srcBlock && secDiv.dataset.section) {
+        srcBlock.section = secDiv.dataset.section;
+        srcBlock.subsectionId = null;
+        save();
+        this._rerender();
+      } else {
+        _unassignFromSubsection(this.srcId, this.context);
+      }
       return;
     }
   },
@@ -3722,6 +3730,7 @@ document.addEventListener('dragstart', e => {
   if (!row) return;
   // Determine context from closest list container
   const ctx = row.closest('#blocks-list') ? 'blocks-list'
+            : row.closest('#timeline-list') ? 'blocks-list'
             : row.closest('#routine-list') ? 'routine-list'
             : row.closest('#ob-block-list') ? 'ob-block-list'
             : 'blocks-list';
@@ -3756,6 +3765,7 @@ document.addEventListener('dragover', e => {
 });
 
 document.addEventListener('drop', e => {
+  console.log('DROP EVENT FIRED!');
   if (!Drag.active) return;
   e.preventDefault();
   e.stopPropagation();
@@ -3789,8 +3799,15 @@ document.addEventListener('drop', e => {
     // Dropped on subsection empty area — assign
     _assignToSubsection(Drag.srcId, subGrp.dataset.subId, Drag.context);
   } else if (secDiv && !subGrp && !blockRow) {
-    // Dropped on section header — unassign
-    _unassignFromSubsection(Drag.srcId, Drag.context);
+    // Dropped on section header — change section AND unassign from subsection
+    if (srcBlock && secDiv.dataset.section) {
+      srcBlock.section = secDiv.dataset.section;
+      srcBlock.subsectionId = null;
+      save();
+      Drag._rerender();
+    } else {
+      _unassignFromSubsection(Drag.srcId, Drag.context);
+    }
   }
   Drag.cleanup();
 });
@@ -4288,7 +4305,7 @@ function renderListView(due){
     const totalCount = secBlocks.length;
     const countLabel = collapsed ? ` · ${doneCount}/${totalCount}` : '';
     secDiv.innerHTML = `
-      <div class="section-divider s-div-${sec.id}${collapsed ? ' sec-collapsed-state' : ''}" id="sec-div-${sec.id}" onclick="toggleSection('${sec.id}')">
+      <div class="section-divider s-div-${sec.id}${collapsed ? ' sec-collapsed-state' : ''}" id="sec-div-${sec.id}" data-section="${sec.id}" onclick="toggleSection('${sec.id}')">
         <span id="sec-icon-${sec.id}" style="font-size:11px;color:var(--text3);margin-right:2px">${collapsed ? '▸' : '▾'}</span>
         ${sec.emoji} ${sec.name}<span class="sec-count" id="sec-count-${sec.id}">${countLabel}</span>
         <span class="sec-done-badge${secAllDone ? ' show' : ''}" id="sec-badge-${sec.id}">✓ Done</span>
@@ -4507,14 +4524,14 @@ function renderTimelineView(due){
     const line=document.createElement('div');line.className='tl-spine-line';
     sw.appendChild(dot);sw.appendChild(line);
     const bw=document.createElement('div');bw.className='tl-block-wrap';
-    byHour[h].forEach(b=>bw.appendChild(buildRow(b,done[b.id],false)));
+    byHour[h].forEach(b=>bw.appendChild(buildRow(b,done[b.id],true)));
     row.appendChild(tl);row.appendChild(sw);row.appendChild(bw);
     el.appendChild(row);
   });
   if(untimed.length){
     el.innerHTML+=`<div class="tl-unscheduled-header">— Unscheduled</div>`;
     const uw=document.createElement('div');uw.style.cssText='padding-left:62px;display:flex;flex-direction:column;gap:6px;margin-bottom:8px';
-    untimed.forEach(b=>uw.appendChild(buildRow(b,done[b.id],false)));
+    untimed.forEach(b=>uw.appendChild(buildRow(b,done[b.id],true)));
     el.appendChild(uw);
   }
 }
@@ -4549,6 +4566,7 @@ function buildRow(b, isDone, draggable){
 
   div.innerHTML = `
     <div class="block-main">
+      <div class="drag-handle">⠿</div>
       <div class="block-dot"></div>
       <div class="block-info" onclick="event.stopPropagation();toggleBlockNotes(this)">
         <div class="block-name">${b.name}${b.optional?` <span class="opt-label">(optional)</span>`:''}${isCalItem?` <span class="cal-item-badge">📅</span>`:''}${isRollover&&!isDone?` <span class="rollover-badge">↩ rollover</span>`:''}</div>
@@ -4644,6 +4662,9 @@ function moveBlock(blockId, dir) {
   const block = blocks.find(b => b.id === blockId);
   if (!block) return;
   
+  // Detect if we're in Manage Blocks tab
+  const isManageBlocks = document.getElementById('ob-blocks')?.classList.contains('active');
+  
   // ── Calendar items (pinnedDate blocks) — reorder within same date ──
   if (block.freq === 'once' && block.pinnedDate) {
     const sameDateBlocks = blocks.filter(b => 
@@ -4671,7 +4692,7 @@ function moveBlock(blockId, dir) {
       _reopenGearAfterMove(blockId);
     } else {
       renderDash();
-      if (document.getElementById('ob-blocks')?.classList.contains('active')) {
+      if (isManageBlocks) {
         renderObBlocks();
       }
       _reopenGearAfterMove(blockId);
@@ -4684,8 +4705,11 @@ function moveBlock(blockId, dir) {
 
   if (block.subsectionId) {
     // ── Block inside a subsection — reorder within it ──
-    const due = dayBlocks().filter(b => isDue(b, appState.currentDay));
-    const subBlocks = sortedBlocks(due.filter(b => b.subsectionId === block.subsectionId));
+    // Use all blocks for Manage Blocks, only due blocks for Daily view
+    const allBlocks = isManageBlocks 
+      ? blocks.filter(b => b.subsectionId === block.subsectionId)
+      : dayBlocks().filter(b => isDue(b, appState.currentDay) && b.subsectionId === block.subsectionId);
+    const subBlocks = sortedBlocks(allBlocks);
     subBlocks.forEach((b, i) => b.order = i);
     const idx = subBlocks.findIndex(b => b.id === blockId);
     if (idx < 0) return;
@@ -4696,7 +4720,7 @@ function moveBlock(blockId, dir) {
     subBlocks[swapIdx].order = tmp;
     save();
     renderDash();
-    if (document.getElementById('ob-blocks')?.classList.contains('active')) {
+    if (isManageBlocks) {
       renderObBlocks();
     }
     _reopenGearAfterMove(blockId);
@@ -4704,8 +4728,10 @@ function moveBlock(blockId, dir) {
   }
 
   // ── Loose block — move within unified section children list ──
-  const due = dayBlocks().filter(b => isDue(b, appState.currentDay));
-  const secBlocks = sortedBlocks(due.filter(b => _resolveSection(b) === secId));
+  const allBlocksForSec = isManageBlocks
+    ? blocks.filter(b => _resolveSection(b) === secId)
+    : dayBlocks().filter(b => isDue(b, appState.currentDay) && _resolveSection(b) === secId);
+  const secBlocks = sortedBlocks(allBlocksForSec);
   const subsecs = getSubsections(secId);
   const usedIds = new Set(subsecs.map(s => s.id));
   const loose = secBlocks.filter(b => !b.subsectionId || !usedIds.has(b.subsectionId));
@@ -4731,7 +4757,7 @@ function moveBlock(blockId, dir) {
     block.subsectionId = null;
     save();
     renderDash();
-    if (document.getElementById('ob-blocks')?.classList.contains('active')) {
+    if (isManageBlocks) {
       renderObBlocks();
     }
     _reopenGearAfterMove(blockId);
@@ -4743,7 +4769,7 @@ function moveBlock(blockId, dir) {
   all[swapIdx].ref.sectionOrder = tmp;
   save();
   renderDash();
-  if (document.getElementById('ob-blocks')?.classList.contains('active')) {
+  if (isManageBlocks) {
     renderObBlocks();
   }
   _reopenGearAfterMove(blockId);
@@ -5408,7 +5434,7 @@ function renderRoutine(){
       if (!secBlocks.length) { return; }
 
       const secDiv = document.createElement('div');
-      secDiv.innerHTML = `<div class="section-divider s-div-${sec.id}">${sec.emoji} ${sec.name}</div>`;
+      secDiv.innerHTML = `<div class="section-divider s-div-${sec.id}" data-section="${sec.id}">${sec.emoji} ${sec.name}</div>`;
       el.appendChild(secDiv);
 
       secBlocks.forEach(b => {
@@ -5449,6 +5475,7 @@ function _buildManageRow(b) {
 
   div.innerHTML = `
     <div class="block-main" style="cursor:default">
+      <div class="drag-handle">⠿</div>
       <div class="block-dot" style="border-color:var(--border-med)"></div>
       <div class="block-info" style="flex:1;min-width:0">
         <div class="block-name">${b.name} ${optStr} ${rollStr}</div>
@@ -5463,11 +5490,14 @@ function _buildManageRow(b) {
       </div>
     </div>
     <div class="manage-blk-actions blk-actions-panel" id="manage-gear-${b.id}" style="display:none">
+      <button class="btn sm blk-act" onclick="event.stopPropagation();moveBlock('${b.id}','up')">↑ Up</button>
+      <button class="btn sm blk-act" onclick="event.stopPropagation();moveBlock('${b.id}','down')">↓ Down</button>
       <button class="btn sm blk-act" onclick="event.stopPropagation();openEditor('${b.id}')">Edit</button>
       <button class="btn sm blk-act" style="color:var(--gold)" onclick="event.stopPropagation();makeBlockInactive('${b.id}')">Inactive</button>
       <button class="btn sm danger blk-act" onclick="event.stopPropagation();deleteBlockFromManage('${b.id}')">Delete</button>
     </div>`;
 
+  attachDrag(div);
   return div;
 }
 
