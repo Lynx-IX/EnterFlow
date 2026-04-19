@@ -4368,6 +4368,12 @@ function renderListView(due){
 
       const sub = child.sub;
       const subBlocks = secBlocks.filter(b => b.subsectionId === sub.id);
+      
+      // Skip rendering this subsection if no blocks are due today
+      const dueSubBlocks = subBlocks.filter(b => isDue(b, appState.currentDay));
+      if (dueSubBlocks.length === 0) {
+        return;
+      }
 
       const grp = document.createElement('div');
       grp.className = 'subsection-group';
@@ -4466,8 +4472,8 @@ function renderListView(due){
       });
 
       const blocksContainer = grp.querySelector('.subsection-blocks');
-      if (subBlocks.length) {
-        subBlocks.forEach(b => blocksContainer.appendChild(buildRow(b, done[b.id], true)));
+      if (dueSubBlocks.length) {
+        dueSubBlocks.forEach(b => blocksContainer.appendChild(buildRow(b, done[b.id], true)));
       } else {
         blocksContainer.innerHTML = `<div style="padding:10px 12px;font-size:11px;color:var(--text3);font-style:italic">No activities yet — use the editor to add blocks here</div>`;
       }
