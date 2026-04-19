@@ -4787,20 +4787,26 @@ function moveBlock(blockId, dir) {
 
 function _reopenGearAfterMove(blockId) {
   console.log('_reopenGearAfterMove called for:', blockId);
-  // Double RAF to ensure DOM is fully updated after render
+  // Triple RAF for extra safety - renders can take time
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      // Try manage-row, cal-modal-row, then fallback to data-id selector
-      const row = document.getElementById('manage-row-' + blockId)
-               || document.getElementById('cal-modal-row-' + blockId)
-               || document.querySelector(`.block-row[data-id="${blockId}"]`);
-      console.log('Found row:', row?.id);
-      if (!row) return;
-      const panel = row.querySelector('.blk-actions-panel, .manage-blk-actions');
-      const gearBtn = row.querySelector('.blk-gear-btn');
-      console.log('Found panel:', !!panel, 'gear:', !!gearBtn);
-      if (panel) panel.style.display = '';
-      if (gearBtn) gearBtn.classList.add('open');
+      requestAnimationFrame(() => {
+        // Try manage-row, cal-modal-row, then fallback to data-id selector
+        const row = document.getElementById('manage-row-' + blockId)
+                 || document.getElementById('cal-modal-row-' + blockId)
+                 || document.getElementById('row-' + blockId)
+                 || document.querySelector(`.block-row[data-id="${blockId}"]`);
+        console.log('Found row:', row?.id);
+        if (!row) return;
+        const panel = row.querySelector('.blk-actions-panel, .manage-blk-actions');
+        const gearBtn = row.querySelector('.blk-gear-btn');
+        console.log('Found panel:', !!panel, 'gear:', !!gearBtn);
+        if (panel) {
+          panel.style.display = '';
+          panel.style.visibility = 'visible';
+        }
+        if (gearBtn) gearBtn.classList.add('open');
+      });
     });
   });
 }
