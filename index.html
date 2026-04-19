@@ -4671,9 +4671,11 @@ function moveBlock(blockId, dir) {
   }
   console.log('Block found:', block.name, 'in section:', block.section);
   
-  // Detect if we're in Manage Blocks tab (screen-routine is active)
-  const isManageBlocks = document.getElementById('screen-routine')?.classList.contains('active');
-  console.log('isManageBlocks:', isManageBlocks);
+  // Detect context by checking which parent container exists
+  const manageRow = document.getElementById('manage-row-' + blockId);
+  const routineList = document.getElementById('routine-list');
+  const isManageBlocks = !!manageRow || (routineList && routineList.querySelector(`[data-id="${blockId}"]`));
+  console.log('isManageBlocks:', isManageBlocks, 'manageRow:', !!manageRow, 'inRoutineList:', !!(routineList?.querySelector(`[data-id="${blockId}"]`)));
   
   // ── Calendar items (pinnedDate blocks) — reorder within same date ──
   if (block.freq === 'once' && block.pinnedDate) {
