@@ -4671,8 +4671,8 @@ function moveBlock(blockId, dir) {
   }
   console.log('Block found:', block.name, 'in section:', block.section);
   
-  // Detect if we're in Manage Blocks tab
-  const isManageBlocks = document.getElementById('ob-blocks')?.classList.contains('active');
+  // Detect if we're in Manage Blocks tab (screen-routine is active)
+  const isManageBlocks = document.getElementById('screen-routine')?.classList.contains('active');
   console.log('isManageBlocks:', isManageBlocks);
   
   // ── Calendar items (pinnedDate blocks) — reorder within same date ──
