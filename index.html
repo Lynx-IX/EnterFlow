@@ -1467,7 +1467,7 @@ body[data-theme="journal"]{
         <button class="view-btn active" id="vbtn-list" onclick="setView('list')">☰ List</button>
         <button class="view-btn" id="vbtn-timeline" onclick="setView('timeline')">⏱ Timeline</button>
       </div>
-      <button class="btn sm primary" onclick="openEditor(null)" style="padding:7px 12px;font-size:12px">+ Add</button>
+      <button class="btn sm primary" onclick="_showDailyAddMenu(event)" style="padding:7px 12px;font-size:12px">+ Add</button>
     </div>
     <!-- Subsection manager — hidden until toggled from section header -->
     <div id="sub-mgr-wrap" style="padding:0 1rem">
@@ -1525,7 +1525,7 @@ body[data-theme="journal"]{
     <div style="padding:4px 1rem 8px"><div class="sec-tabs" id="routine-tabs"></div></div>
     <!-- Add block button - prominent placement -->
     <div style="padding:0 1rem 12px">
-      <button class="btn primary" id="routine-add-btn" onclick="openEditor(null, routineFilter || 'morning')" style="width:100%;padding:12px">+ Add Block</button>
+      <button class="btn primary" id="routine-add-btn" onclick="_showManageAddMenu(event)" style="width:100%;padding:12px">+ Add</button>
     </div>
     <div class="blocks-list" id="routine-list"></div>
     <div id="inactive-blocks-section" style="padding:0 1rem"></div>
@@ -4234,6 +4234,86 @@ function renderDash(){
   }
 }
 
+function _showDailyAddMenu(ev) {
+  ev.stopPropagation();
+  const btn = ev.target;
+  const existing = document.querySelector('.daily-add-menu');
+  if (existing) { existing.remove(); return; }
+  
+  const menu = document.createElement('div');
+  menu.className = 'daily-add-menu';
+  menu.style.cssText = 'position:absolute;top:40px;right:1rem;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:999;min-width:160px';
+  
+  const blockBtn = document.createElement('button');
+  blockBtn.className = 'btn sm';
+  blockBtn.style.cssText = 'width:100%;text-align:left;padding:10px 14px;border-radius:0;border-bottom:1px solid var(--border)';
+  blockBtn.textContent = '📋 Add Block';
+  blockBtn.onclick = () => { menu.remove(); openEditor(null); };
+  
+  const subBtn = document.createElement('button');
+  subBtn.className = 'btn sm';
+  subBtn.style.cssText = 'width:100%;text-align:left;padding:10px 14px;border-radius:0';
+  subBtn.textContent = '📁 Add Subsection';
+  subBtn.onclick = () => {
+    menu.remove();
+    // Find first visible section to add subsection to
+    const firstSec = document.querySelector('.section-divider');
+    if (firstSec && firstSec.dataset.section) {
+      _openInlineSubAdd(firstSec.parentElement, firstSec.dataset.section);
+    }
+  };
+  
+  menu.appendChild(blockBtn);
+  menu.appendChild(subBtn);
+  btn.parentElement.style.position = 'relative';
+  btn.parentElement.appendChild(menu);
+  
+  setTimeout(() => {
+    const dismiss = () => { menu.remove(); document.removeEventListener('click', dismiss, true); };
+    document.addEventListener('click', dismiss, true);
+  }, 0);
+}
+
+function _showManageAddMenu(ev) {
+  ev.stopPropagation();
+  const btn = ev.target;
+  const existing = document.querySelector('.manage-add-menu');
+  if (existing) { existing.remove(); return; }
+  
+  const menu = document.createElement('div');
+  menu.className = 'manage-add-menu';
+  menu.style.cssText = 'position:absolute;bottom:100%;left:0;right:0;margin-bottom:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:999';
+  
+  const blockBtn = document.createElement('button');
+  blockBtn.className = 'btn sm';
+  blockBtn.style.cssText = 'width:100%;text-align:left;padding:10px 14px;border-radius:0;border-bottom:1px solid var(--border)';
+  blockBtn.textContent = '📋 Add Block';
+  blockBtn.onclick = () => { menu.remove(); openEditor(null, routineFilter || 'morning'); };
+  
+  const subBtn = document.createElement('button');
+  subBtn.className = 'btn sm';
+  subBtn.style.cssText = 'width:100%;text-align:left;padding:10px 14px;border-radius:0';
+  subBtn.textContent = '📁 Add Subsection';
+  subBtn.onclick = () => {
+    menu.remove();
+    // Find first visible section to add subsection to
+    const firstSec = document.querySelector('#routine-list .section-divider');
+    if (firstSec && firstSec.dataset.section) {
+      _openInlineSubAdd(firstSec.parentElement, firstSec.dataset.section);
+    }
+  };
+  
+  menu.appendChild(blockBtn);
+  menu.appendChild(subBtn);
+  btn.parentElement.style.position = 'relative';
+  btn.parentElement.appendChild(menu);
+  
+  setTimeout(() => {
+    const dismiss = () => { menu.remove(); document.removeEventListener('click', dismiss, true); };
+    document.addEventListener('click', dismiss, true);
+  }, 0);
+}
+
 function _openInlineSubAdd(secDiv, sectionId) {
   // Remove any existing inline forms
   document.querySelectorAll('.sec-inline-add').forEach(el => el.remove());
@@ -5497,7 +5577,20 @@ function renderRoutine(){
       if (!secBlocks.length) { return; }
 
       const secDiv = document.createElement('div');
-      secDiv.innerHTML = `<div class="section-divider s-div-${sec.id}" data-section="${sec.id}">${sec.emoji} ${sec.name}</div>`;
+      secDiv.innerHTML = `<div class="section-divider s-div-${sec.id}" data-section="${sec.id}">
+        ${sec.emoji} ${sec.name}
+        <button class="sec-add-sub-btn" data-sec="${sec.id}" title="Add subsection" onclick="event.stopPropagation()">+</button>
+      </div>`;
+      
+      // Add subsection button handler
+      const addSubBtn = secDiv.querySelector('.sec-add-sub-btn');
+      if (addSubBtn) {
+        addSubBtn.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          _openInlineSubAdd(secDiv, sec.id);
+        });
+      }
+      
       el.appendChild(secDiv);
 
       // ── Build unified children list (subsections + loose blocks) ──
