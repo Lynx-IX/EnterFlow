@@ -4596,8 +4596,13 @@ function renderTimelineView(due){
   const el=document.getElementById('timeline-list');el.innerHTML='';
   const done=dayDone();
   const timed=sortedBlocks(due.filter(b=>b.startTime));
-  const untimed=due.filter(b=>!b.startTime);
-  if(!timed.length&&!untimed.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">🎉</div><p>Nothing scheduled today!</p></div>`;return}
+  
+  // Only show blocks with start times in Timeline
+  if(!timed.length){
+    el.innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><p>No scheduled blocks today.</p><p style="font-size:13px;color:var(--text3);margin-top:8px">Add start times to blocks to see your timeline.</p></div>`;
+    return;
+  }
+  
   const byHour={};timed.forEach(b=>{const h=parseInt(b.startTime.split(':')[0]);(byHour[h]=byHour[h]||[]).push(b)});
   const hours=Object.keys(byHour).sort((a,b)=>a-b);
   hours.forEach((h)=>{
@@ -4608,19 +4613,13 @@ function renderTimelineView(due){
     const line=document.createElement('div');line.className='tl-spine-line';
     sw.appendChild(dot);sw.appendChild(line);
     const bw=document.createElement('div');bw.className='tl-block-wrap';
-    byHour[h].forEach(b=>bw.appendChild(buildRow(b,done[b.id],true)));
+    byHour[h].forEach(b=>bw.appendChild(buildRow(b,done[b.id],true,'timeline')));
     row.appendChild(tl);row.appendChild(sw);row.appendChild(bw);
     el.appendChild(row);
   });
-  if(untimed.length){
-    el.innerHTML+=`<div class="tl-unscheduled-header">— Unscheduled</div>`;
-    const uw=document.createElement('div');uw.style.cssText='padding-left:62px;display:flex;flex-direction:column;gap:6px;margin-bottom:8px';
-    untimed.forEach(b=>uw.appendChild(buildRow(b,done[b.id],true)));
-    el.appendChild(uw);
-  }
 }
 
-function buildRow(b, isDone, draggable){
+function buildRow(b, isDone, draggable, context){
   const div = document.createElement('div');
   const isCalItem = b.freq === 'once' && !!b.pinnedDate;
   const isRollover = (appState.days[appState.currentDay]?.rollovers || []).includes(b.id);
@@ -4648,6 +4647,11 @@ function buildRow(b, isDone, draggable){
   const notesHtml = b.notes
     ? `<div class="block-detail-note">${b.notes}</div>` : '';
 
+  // ── Arrow buttons (hide in Timeline view) ──
+  const arrowButtons = context === 'timeline' ? '' : `
+    <button class="btn sm blk-act" onclick="event.stopPropagation();moveBlock('${b.id}','up')">↑ Up</button>
+    <button class="btn sm blk-act" onclick="event.stopPropagation();moveBlock('${b.id}','down')">↓ Down</button>`;
+
   div.innerHTML = `
     <div class="block-main">
       <div class="drag-handle">⠿</div>
@@ -4671,8 +4675,7 @@ function buildRow(b, isDone, draggable){
     </div>
     <div class="blk-actions-panel" style="display:none">
       ${b.notes?`<div style="font-size:12px;color:var(--text2);padding:2px 4px 6px;font-style:italic;flex-basis:100%;white-space:pre-wrap">${b.notes}</div>`:''}
-      <button class="btn sm blk-act" onclick="event.stopPropagation();moveBlock('${b.id}','up')">↑ Up</button>
-      <button class="btn sm blk-act" onclick="event.stopPropagation();moveBlock('${b.id}','down')">↓ Down</button>
+      ${arrowButtons}
       <button class="btn sm blk-act" onclick="event.stopPropagation();openEditor('${b.id}')">✏ Edit</button>
       <button class="btn sm danger blk-act" onclick="event.stopPropagation();quickDeleteBlock('${b.id}',this)">🗑</button>
     </div>`;
