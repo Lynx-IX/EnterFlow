@@ -4703,8 +4703,10 @@ function moveBlock(blockId, dir) {
       _renderCalDayModalBody(_calDayModalDate);
       _reopenGearAfterMove(blockId);
     } else {
+      console.log('Calling renderDash...');
       renderDash();
       if (isManageBlocks) {
+        console.log('Calling renderRoutine...');
         renderRoutine();
       }
       _reopenGearAfterMove(blockId);
@@ -4731,8 +4733,10 @@ function moveBlock(blockId, dir) {
     subBlocks[idx].order = subBlocks[swapIdx].order;
     subBlocks[swapIdx].order = tmp;
     save();
+    console.log('Calling renderDash...');
     renderDash();
     if (isManageBlocks) {
+      console.log('Calling renderRoutine...');
       renderRoutine();
     }
     _reopenGearAfterMove(blockId);
@@ -4768,8 +4772,10 @@ function moveBlock(blockId, dir) {
     block.sectionOrder = dir === 'up' ? 9999 : -1;
     block.subsectionId = null;
     save();
+    console.log('Cross-section move - Calling renderDash...');
     renderDash();
     if (isManageBlocks) {
+      console.log('Calling renderRoutine...');
       renderRoutine();
     }
     _reopenGearAfterMove(blockId);
@@ -4780,8 +4786,10 @@ function moveBlock(blockId, dir) {
   all[idx].ref.sectionOrder = all[swapIdx].ref.sectionOrder;
   all[swapIdx].ref.sectionOrder = tmp;
   save();
+  console.log('Within-section move - Calling renderDash...');
   renderDash();
   if (isManageBlocks) {
+    console.log('Calling renderRoutine...');
     renderRoutine();
   }
   _reopenGearAfterMove(blockId);
