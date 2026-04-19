@@ -6,6 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#140828">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
 <title>EnterFlow</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&family=Nunito:wght@300;400;500;700&family=Roboto+Slab:wght@300;400;500;700&family=Dancing+Script:wght@400;600;700&family=Righteous&family=Barlow+Condensed:wght@300;400;500;700&family=Lora:ital,wght@0,400;0,500;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -3826,6 +3829,7 @@ document.addEventListener('touchstart', e => {
   const startX = t.clientX, startY = t.clientY;
 
   const ctx = row.closest('#blocks-list') ? 'blocks-list'
+            : row.closest('#timeline-list') ? 'blocks-list'
             : row.closest('#routine-list') ? 'routine-list'
             : row.closest('#ob-block-list') ? 'ob-block-list'
             : 'blocks-list';
@@ -4658,12 +4662,18 @@ function toggleBlockGear(el) {
 }
 
 function moveBlock(blockId, dir) {
+  console.log('moveBlock called:', blockId, dir);
   const blocks = _globalBlocks();
   const block = blocks.find(b => b.id === blockId);
-  if (!block) return;
+  if (!block) {
+    console.log('Block not found:', blockId);
+    return;
+  }
+  console.log('Block found:', block.name, 'in section:', block.section);
   
   // Detect if we're in Manage Blocks tab
   const isManageBlocks = document.getElementById('ob-blocks')?.classList.contains('active');
+  console.log('isManageBlocks:', isManageBlocks);
   
   // ── Calendar items (pinnedDate blocks) — reorder within same date ──
   if (block.freq === 'once' && block.pinnedDate) {
