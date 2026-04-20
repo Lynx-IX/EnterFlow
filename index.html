@@ -2312,27 +2312,45 @@ body[data-theme="journal"]{
       <div style="margin-bottom:20px">
         <div class="ct-color-row">
           <label>Background</label>
-          <input type="color" id="ct-bg" onchange="updateCustomThemePreview()">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="color" id="ct-bg" onchange="updateCustomThemePreview();document.getElementById('ct-bg-text').value=this.value" style="width:60px;height:44px;cursor:pointer">
+            <input type="text" id="ct-bg-text" placeholder="#140828" maxlength="7" oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)){document.getElementById('ct-bg').value=this.value;updateCustomThemePreview()}" style="flex:1;background:var(--bg2);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;font-family:var(--fm);font-size:13px;outline:none">
+          </div>
         </div>
         <div class="ct-color-row">
           <label>Card Color</label>
-          <input type="color" id="ct-card" onchange="updateCustomThemePreview()">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="color" id="ct-card" onchange="updateCustomThemePreview();document.getElementById('ct-card-text').value=this.value" style="width:60px;height:44px;cursor:pointer">
+            <input type="text" id="ct-card-text" placeholder="#1a0d2e" maxlength="7" oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)){document.getElementById('ct-card').value=this.value;updateCustomThemePreview()}" style="flex:1;background:var(--bg2);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;font-family:var(--fm);font-size:13px;outline:none">
+          </div>
         </div>
         <div class="ct-color-row">
           <label>Primary Color</label>
-          <input type="color" id="ct-primary" onchange="updateCustomThemePreview()">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="color" id="ct-primary" onchange="updateCustomThemePreview();document.getElementById('ct-primary-text').value=this.value" style="width:60px;height:44px;cursor:pointer">
+            <input type="text" id="ct-primary-text" placeholder="#a855f7" maxlength="7" oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)){document.getElementById('ct-primary').value=this.value;updateCustomThemePreview()}" style="flex:1;background:var(--bg2);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;font-family:var(--fm);font-size:13px;outline:none">
+          </div>
         </div>
         <div class="ct-color-row">
           <label>Secondary Color</label>
-          <input type="color" id="ct-secondary" onchange="updateCustomThemePreview()">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="color" id="ct-secondary" onchange="updateCustomThemePreview();document.getElementById('ct-secondary-text').value=this.value" style="width:60px;height:44px;cursor:pointer">
+            <input type="text" id="ct-secondary-text" placeholder="#e11d48" maxlength="7" oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)){document.getElementById('ct-secondary').value=this.value;updateCustomThemePreview()}" style="flex:1;background:var(--bg2);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;font-family:var(--fm);font-size:13px;outline:none">
+          </div>
         </div>
         <div class="ct-color-row">
           <label>Tertiary Color</label>
-          <input type="color" id="ct-tertiary" onchange="updateCustomThemePreview()">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="color" id="ct-tertiary" onchange="updateCustomThemePreview();document.getElementById('ct-tertiary-text').value=this.value" style="width:60px;height:44px;cursor:pointer">
+            <input type="text" id="ct-tertiary-text" placeholder="#f59e0b" maxlength="7" oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)){document.getElementById('ct-tertiary').value=this.value;updateCustomThemePreview()}" style="flex:1;background:var(--bg2);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;font-family:var(--fm);font-size:13px;outline:none">
+          </div>
         </div>
         <div class="ct-color-row">
           <label>Quaternary Color</label>
-          <input type="color" id="ct-quaternary" onchange="updateCustomThemePreview()">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="color" id="ct-quaternary" onchange="updateCustomThemePreview();document.getElementById('ct-quaternary-text').value=this.value" style="width:60px;height:44px;cursor:pointer">
+            <input type="text" id="ct-quaternary-text" placeholder="#6366f1" maxlength="7" oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)){document.getElementById('ct-quaternary').value=this.value;updateCustomThemePreview()}" style="flex:1;background:var(--bg2);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;font-family:var(--fm);font-size:13px;outline:none">
+          </div>
         </div>
       </div>
       
@@ -3791,11 +3809,17 @@ function openCustomThemeCreator(editId = null) {
   requestAnimationFrame(() => {
     console.log('Setting values after render...');
     document.getElementById('ct-bg').value = startColors.bg;
+    document.getElementById('ct-bg-text').value = startColors.bg;
     document.getElementById('ct-card').value = startColors.card || startColors.bg;
+    document.getElementById('ct-card-text').value = startColors.card || startColors.bg;
     document.getElementById('ct-primary').value = startColors.primary;
+    document.getElementById('ct-primary-text').value = startColors.primary;
     document.getElementById('ct-secondary').value = startColors.secondary;
+    document.getElementById('ct-secondary-text').value = startColors.secondary;
     document.getElementById('ct-tertiary').value = startColors.tertiary;
+    document.getElementById('ct-tertiary-text').value = startColors.tertiary;
     document.getElementById('ct-quaternary').value = startColors.quaternary;
+    document.getElementById('ct-quaternary-text').value = startColors.quaternary;
     
     console.log('Values set! Current picker values:', {
       bg: document.getElementById('ct-bg').value,
