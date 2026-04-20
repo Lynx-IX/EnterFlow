@@ -3514,16 +3514,18 @@ function obQuickAdd(name, section) {
 function obFinish() {
   // Complete onboarding and go to main app
   appState.onboarded = true;
+  appState.tutorialCompleted = true; // Skip tutorials
   appState.currentDay = getTodayString(); // Make sure we're on today's date
   save();
   
   // Hide all onboarding screens
   document.querySelectorAll('.ob-screen').forEach(s => s.classList.remove('active'));
   
-  // Show daily screen
-  document.getElementById('screen-dash').classList.add('active');
+  // Show nav bar
+  document.getElementById('nav-bar').classList.add('visible');
   
-  // Render the daily view with blocks
+  // Show daily screen and render
+  navTo('dash'); // This handles screen switching properly
   renderDash();
 }
 
