@@ -1264,12 +1264,70 @@ body[data-theme="journal"]{
 "></div>
 
 <!-- ════ ONBOARDING ════ -->
+<!-- ONBOARDING SCREEN 1: THE HOOK -->
 <div id="ob-welcome" class="ob-screen">
   <div class="ob-logo"><div class="ob-logo-icon">◈</div><span class="ob-logo-text">EnterFlow</span></div>
-  <h1 class="ob-display">Design your<br><em>perfect day.</em></h1>
-  <p class="ob-sub">A flexible routine tracker that adapts to how you actually live. Create recurring activities, track your progress, and build sustainable habits.</p>
-  <p style="font-size:12px;color:var(--text3);margin-bottom:14px;font-weight:500;text-transform:uppercase;letter-spacing:.08em">Choose your theme</p>
-  <div class="theme-grid" id="ob-theme-grid">
+  <h1 class="ob-display">Your day,<br><em>visualized and celebrated.</em></h1>
+  <p class="ob-sub">EnterFlow turns your routine into a timeline you actually want to follow. Track what you do, complete blocks, and watch your day take shape—no rigid schedules, just structure that adapts to you.</p>
+  
+  <!-- Simple visual preview -->
+  <div style="margin:32px 0;padding:20px;background:var(--surface);border-radius:16px;border:1px solid var(--border)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="width:12px;height:12px;border-radius:50%;background:var(--accent)"></div>
+      <div style="flex:1;height:8px;background:var(--border);border-radius:4px;position:relative">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:65%;background:var(--accent);border-radius:4px"></div>
+      </div>
+      <span style="font-size:22px">🎉</span>
+    </div>
+    <p style="font-size:12px;color:var(--text3);text-align:center">Complete blocks → See progress → Celebrate wins</p>
+  </div>
+
+  <button class="btn primary" onclick="obGo('ob-how')" style="min-width:180px">Get Started</button>
+</div>
+
+<!-- ONBOARDING SCREEN 2: HOW IT WORKS -->
+<div id="ob-how" class="ob-screen">
+  <h2 style="font-family:var(--fd);font-size:1.8rem;margin-bottom:10px">Build your day from blocks</h2>
+  <p class="ob-sub" style="margin-bottom:32px">Here's how EnterFlow works:</p>
+  
+  <div style="text-align:left;max-width:400px;margin:0 auto 32px">
+    <div style="display:flex;gap:16px;margin-bottom:20px">
+      <div style="font-size:32px;flex-shrink:0">📅</div>
+      <div>
+        <div style="font-weight:500;margin-bottom:4px;color:var(--text1)">Sections divide your day</div>
+        <div style="font-size:13px;color:var(--text3)">Morning, Afternoon, Evening, Night—customize the times to match your rhythm</div>
+      </div>
+    </div>
+    
+    <div style="display:flex;gap:16px;margin-bottom:20px">
+      <div style="font-size:32px;flex-shrink:0">◈</div>
+      <div>
+        <div style="font-weight:500;margin-bottom:4px;color:var(--text1)">Blocks are your activities</div>
+        <div style="font-size:13px;color:var(--text3)">Add start times or leave flexible—whatever works for you</div>
+      </div>
+    </div>
+    
+    <div style="display:flex;gap:16px">
+      <div style="font-size:32px;flex-shrink:0">🎉</div>
+      <div>
+        <div style="font-weight:500;margin-bottom:4px;color:var(--text1)">Complete blocks, see progress</div>
+        <div style="font-size:13px;color:var(--text3)">Fireworks celebrate each section you finish</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ob-btns">
+    <button class="btn" onclick="obGo('ob-welcome')">← Back</button>
+    <button class="btn primary" onclick="obGo('ob-theme')">Next →</button>
+  </div>
+</div>
+
+<!-- ONBOARDING SCREEN 3: PERSONALIZE -->
+<div id="ob-theme" class="ob-screen">
+  <h2 style="font-family:var(--fd);font-size:1.8rem;margin-bottom:10px">Make it yours</h2>
+  <p class="ob-sub" style="margin-bottom:28px">Choose a theme and style that matches your vibe. You can change this anytime in Settings.</p>
+  
+  <div class="theme-grid" id="ob-theme-grid" style="margin-bottom:24px">
     <div class="theme-card tc-cosmic" data-t="cosmic" onclick="obPickTheme('cosmic')"><div class="theme-swatch"><div class="theme-dot" style="background:#a855f7"></div><div class="theme-dot" style="background:#e11d48"></div><div class="theme-dot" style="background:#f59e0b"></div></div><div class="theme-label">✦ Cosmic</div></div>
     <div class="theme-card tc-earthy" data-t="earthy" onclick="obPickTheme('earthy')"><div class="theme-swatch"><div class="theme-dot" style="background:#e8935a"></div><div class="theme-dot" style="background:#3ab5a0"></div><div class="theme-dot" style="background:#f0c040"></div></div><div class="theme-label">🌿 Earthy</div></div>
     <div class="theme-card tc-mono" data-t="mono" onclick="obPickTheme('mono')"><div class="theme-swatch" style="background:#1f1f1f"><div class="theme-dot" style="background:#e8e8e8"></div><div class="theme-dot" style="background:#b0b0b0"></div><div class="theme-dot" style="background:#666666"></div></div><div class="theme-label">◻ Mono</div></div>
@@ -1277,10 +1335,9 @@ body[data-theme="journal"]{
     <div class="theme-card tc-jungle" data-t="jungle" onclick="obPickTheme('jungle')"><div class="theme-swatch"><div class="theme-dot" style="background:#4ade80"></div><div class="theme-dot" style="background:#a3e635"></div><div class="theme-dot" style="background:#fbbf24"></div></div><div class="theme-label">🌿 Jungle</div></div>
     <div class="theme-card tc-journal" data-t="journal" onclick="obPickTheme('journal')"><div class="theme-swatch" style="background:#f5efda"><div class="theme-dot" style="background:#2d3f6a"></div><div class="theme-dot" style="background:#7a2030"></div><div class="theme-dot" style="background:#8a6a20"></div></div><div class="theme-label">📖 Journal</div></div>
   </div>
-  <p style="font-size:11px;color:var(--text3);margin-bottom:16px">✦ More themes and customization in Settings</p>
 
   <!-- Dark / Light toggle -->
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;justify-content:center">
     <span style="font-size:13px;color:var(--text2)">Appearance</span>
     <div style="display:flex;gap:4px">
       <button id="ob-mode-dark" class="btn sm" style="font-size:12px" onclick="obPickMode('dark')">🌙 Dark</button>
@@ -1289,7 +1346,7 @@ body[data-theme="journal"]{
   </div>
 
   <!-- Font picker -->
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px;justify-content:center">
     <span style="font-size:13px;color:var(--text2)">Font</span>
     <div style="position:relative">
       <button class="btn sm" id="ob-font-btn" onclick="toggleObFontDropdown()" style="min-width:140px;justify-content:space-between;display:flex;align-items:center;gap:6px">
@@ -1305,28 +1362,42 @@ body[data-theme="journal"]{
     </div>
   </div>
 
-  <button class="btn primary" onclick="obGo('ob-name')" style="min-width:180px">Get Started →</button>
-</div>
-
-<div id="ob-name" class="ob-screen">
-  <h2 style="font-family:var(--fd);font-size:1.8rem;margin-bottom:10px">What's your name?</h2>
-  <p class="ob-sub" style="margin-bottom:28px">We'll personalize your EnterFlow experience.</p>
-  <div class="ob-form">
-    <div class="field"><label>Your name</label><input id="inp-name" type="text" placeholder="e.g. Alex" autocomplete="off" onkeydown="if(event.key==='Enter')obSaveName()"></div>
-  </div>
-  <div class="ob-btns" style="margin-top:16px">
-    <button class="btn" onclick="obGo('ob-welcome')">← Back</button>
-    <button class="btn primary" onclick="obSaveName()">Continue →</button>
+  <div class="ob-btns">
+    <button class="btn" onclick="obGo('ob-how')">← Back</button>
+    <button class="btn primary" onclick="obGo('ob-quick-start')">Continue →</button>
   </div>
 </div>
 
-<div id="ob-blocks" class="ob-screen" style="text-align:left;align-items:stretch;max-width:600px;margin:0 auto;width:100%;padding:40px 20px 80px">
-  <div style="text-align:center;margin-bottom:28px">
-    <h2 style="font-family:var(--fd);font-size:1.8rem;margin-bottom:8px">Build your routine</h2>
-    <p style="color:var(--text2);font-weight:300;font-size:.95rem">Add activities you want to do regularly. Don't overthink it — you can always edit, reorder, or remove them later.</p>
+<!-- ONBOARDING SCREEN 4: QUICK START -->
+<div id="ob-quick-start" class="ob-screen">
+  <h2 style="font-family:var(--fd);font-size:1.8rem;margin-bottom:10px">Add your first blocks</h2>
+  <p class="ob-sub" style="margin-bottom:28px">Tap to add common activities, or skip and build from scratch.</p>
+  
+  <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:24px;max-width:500px;margin-left:auto;margin-right:auto">
+    <button class="btn" onclick="obQuickAdd('🌅 Wake up routine', 'morning')" style="flex:1 1 auto;min-width:140px">🌅 Wake up routine</button>
+    <button class="btn" onclick="obQuickAdd('☕ Breakfast', 'morning')" style="flex:1 1 auto;min-width:140px">☕ Breakfast</button>
+    <button class="btn" onclick="obQuickAdd('💪 Exercise', 'morning')" style="flex:1 1 auto;min-width:140px">💪 Exercise</button>
+    <button class="btn" onclick="obQuickAdd('💼 Work focus', 'afternoon')" style="flex:1 1 auto;min-width:140px">💼 Work focus</button>
+    <button class="btn" onclick="obQuickAdd('🍽️ Dinner', 'evening')" style="flex:1 1 auto;min-width:140px">🍽️ Dinner</button>
+    <button class="btn" onclick="obQuickAdd('📚 Reading', 'evening')" style="flex:1 1 auto;min-width:140px">📚 Reading</button>
+    <button class="btn" onclick="obQuickAdd('😴 Wind down', 'night')" style="flex:1 1 auto;min-width:140px">😴 Wind down</button>
   </div>
-  <div class="sec-tabs" id="ob-sec-tabs"></div>
-  <p style="font-size:11.5px;color:var(--text3);margin:8px 0 16px;text-align:center">💡 Sections help organize your day — tap each tab to see suggestions</p>
+
+  <div class="ob-btns">
+    <button class="btn" onclick="obGo('ob-theme')">← Back</button>
+    <button class="btn primary" onclick="obFinish()">Start using EnterFlow →</button>
+  </div>
+  
+  <button class="btn sm" onclick="obFinish()" style="margin-top:16px;font-size:12px;color:var(--text3)">Skip - I'll build from scratch</button>
+</div>
+
+<div id="ob-name" class="ob-screen" style="display:none">
+  <!-- Hidden for now - can remove or keep for future use -->
+</div>
+
+<div id="ob-blocks" class="ob-screen" style="display:none">
+  <!-- Hidden - replaced by quick-start flow -->
+</div>
 
   <!-- Primary action -->
   <button class="btn primary" onclick="openEditor(null)" style="width:100%;margin-bottom:16px;padding:13px">+ Create Block</button>
@@ -3370,7 +3441,7 @@ function reorder(srcId, dstId, blocksArr) {
 }
 
 /* ══ ONBOARDING ══ */
-const OB_PROG={'ob-welcome':0,'ob-name':33,'ob-blocks':66};
+const OB_PROG={'ob-welcome':0,'ob-how':25,'ob-theme':50,'ob-quick-start':75};
 /* ══ ONBOARDING THEME / MODE / FONT ══ */
 
 function obPickTheme(t) {
@@ -3421,6 +3492,41 @@ function obGo(id){
   document.getElementById('progress-bar').style.width=(OB_PROG[id]??0)+'%';
   if(id==='ob-welcome') _obInitWelcome();
   if(id==='ob-blocks')renderObBlocks();
+}
+
+function obQuickAdd(name, section) {
+  // Quick-add a block from onboarding
+  const blockId = section + '-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const block = {
+    id: blockId,
+    name: name,
+    section: section,
+    freq: 'daily',
+    dur: 30,
+    order: _globalBlocks().filter(b => b.section === section).length,
+    timerMode: 'none'
+  };
+  _globalBlocks().push(block);
+  save();
+  
+  // Visual feedback
+  const btn = event.target;
+  btn.style.background = 'var(--accent)';
+  btn.style.color = 'white';
+  btn.textContent = '✓ Added';
+  setTimeout(() => {
+    btn.style.background = '';
+    btn.style.color = '';
+  }, 1000);
+}
+
+function obFinish() {
+  // Complete onboarding and go to main app
+  S.onboarded = true;
+  save();
+  document.querySelectorAll('.ob-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-dash').classList.add('active');
+  init();
 }
 
 function obSaveName(){S.userName=document.getElementById('inp-name').value.trim();obGo('ob-blocks')}
