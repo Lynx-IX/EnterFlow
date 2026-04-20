@@ -337,6 +337,7 @@ body[data-theme="sunset"]::before{background:radial-gradient(ellipse 60% 40% at 
   font-family:var(--fd);font-size:22px;font-weight:700;letter-spacing:-.3px;
   background:linear-gradient(135deg,var(--text) 0%,var(--gold-glow) 50%,var(--accent) 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3)) drop-shadow(0 0 12px rgba(0,0,0,0.2));
 }
 
 /* Hero info block — centred */
@@ -361,6 +362,7 @@ body[data-theme="sunset"]::before{background:radial-gradient(ellipse 60% 40% at 
 .header-date-text{
   font-family:var(--fd);font-size:1rem;font-weight:400;font-style:italic;
   color:var(--text2);letter-spacing:.01em;
+  text-shadow:0 2px 8px rgba(0,0,0,0.4), 0 0 12px rgba(0,0,0,0.3);
 }
 
 /* Weather row */
@@ -433,9 +435,11 @@ body[data-theme="sunset"]::before{background:radial-gradient(ellipse 60% 40% at 
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   max-width:200px;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3)) drop-shadow(0 0 12px rgba(0,0,0,0.2));
 }
 .day-nav-sub{
   font-family:var(--fm);font-size:10px;color:var(--text3);
+  text-shadow:0 1px 4px rgba(0,0,0,0.4);
   letter-spacing:.04em;
 }
 .day-nav-today-btn{
@@ -450,11 +454,26 @@ body[data-theme="sunset"]::before{background:radial-gradient(ellipse 60% 40% at 
 
 /* STREAK */
 .streak-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem;padding:0 1rem}
-.streak-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;position:relative;overflow:hidden;backdrop-filter:blur(8px)}
+.streak-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:10px 12px;position:relative;overflow:hidden;backdrop-filter:blur(8px);
+  box-shadow:0 2px 12px rgba(0,0,0,0.15);
+}
 .streak-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--gold))}
-.sc-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
-.sc-val{font-size:22px;font-weight:700;line-height:1;background:linear-gradient(135deg,var(--accent),var(--gold-glow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.sc-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.sc-label{
+  font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;
+  text-shadow:0 1px 3px rgba(0,0,0,0.3);
+}
+.sc-val{
+  font-size:22px;font-weight:700;line-height:1;
+  background:linear-gradient(135deg,var(--accent),var(--gold-glow));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 1px 4px rgba(0,0,0,0.3));
+}
+.sc-sub{
+  font-size:10px;color:var(--text3);margin-top:2px;
+  text-shadow:0 1px 3px rgba(0,0,0,0.3);
+}
 .dot-grid{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px}
 .day-dot{width:9px;height:9px;border-radius:50%;background:var(--border-med)}
 .day-dot.done{background:var(--accent);box-shadow:0 0 4px var(--glow)}
@@ -496,6 +515,7 @@ body[data-theme="sunset"]::before{background:radial-gradient(ellipse 60% 40% at 
 [data-theme="journal"] .btn{background:rgba(45,63,106,0.06)}
 .btn:active{opacity:.7;transform:scale(.96)}
 .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent;font-weight:600}
+body[data-theme^="custom-"] .btn.primary{color:var(--btn-text)}
 .btn.primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
 .btn.sm{padding:5px 12px;font-size:12px}
 .btn.danger{color:var(--danger);border-color:rgba(244,63,94,.3)}
@@ -898,6 +918,31 @@ body[data-theme="sunset"]::before{background:radial-gradient(ellipse 60% 40% at 
   color:var(--text3);cursor:pointer;transition:all .18s;
 }
 .tp-font-btn.active{background:var(--accent);color:#fff;border-color:transparent}
+
+/* CUSTOM THEME CREATOR */
+#custom-theme-overlay{display:none}
+#custom-theme-overlay.open{display:flex}
+.ct-color-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;background:var(--bg2);border-radius:10px;
+  margin-bottom:8px;border:1px solid var(--border);
+}
+.ct-color-row label{
+  font-size:13px;font-weight:500;color:var(--text);
+}
+.ct-color-row input[type="color"]{
+  width:48px;height:32px;border:2px solid var(--border-med);
+  border-radius:8px;cursor:pointer;background:transparent;
+}
+.ct-color-row input[type="color"]::-webkit-color-swatch-wrapper{padding:2px}
+.ct-color-row input[type="color"]::-webkit-color-swatch{border:none;border-radius:4px}
+#ct-mode-dark.active,#ct-mode-light.active{
+  background:var(--accent);color:#fff;border-color:transparent;
+}
+/* Background mode radio buttons */
+input[type="radio"]:checked + span{font-weight:600}
+label:has(input[type="radio"]:checked){border-color:var(--accent)!important;background:var(--surface2)!important}
+
 .tp-font-btn:hover:not(.active){border-color:var(--accent);color:var(--text)}
 
 /* Font dropdown */
@@ -1433,14 +1478,6 @@ body[data-theme="journal"]{
   </div>
   
   <button class="btn sm" onclick="obFinish()" style="margin-top:16px;font-size:12px;color:var(--text3)">Skip - I'll add activities later</button>
-</div>
-
-<div id="ob-name" class="ob-screen" style="display:none">
-  <!-- Hidden for now - can remove or keep for future use -->
-</div>
-
-<div id="ob-blocks" class="ob-screen" style="display:none">
-  <!-- Hidden - replaced by quick-start flow -->
 </div>
 
 <!-- ════ POST-ONBOARDING TUTORIAL ════ -->
@@ -2231,6 +2268,131 @@ body[data-theme="journal"]{
       <button class="btn icon" onclick="closeThemePicker()">✕</button>
     </div>
     <div id="theme-picker-list"></div>
+    <button class="btn primary" onclick="event.stopPropagation();openCustomThemeCreator()" style="width:100%;margin-top:16px">+ Create Custom Theme</button>
+  </div>
+</div>
+
+<!-- ════ CUSTOM THEME CREATOR ════ -->
+<div id="custom-theme-overlay" onclick="handleCustomThemeOverlayClick(event)" style="
+  position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);
+  z-index:350;align-items:flex-end;justify-content:center;
+">
+  <div id="custom-theme-sheet" style="
+    background:var(--surface);width:100%;max-width:520px;max-height:90vh;
+    border-radius:var(--rlg) var(--rlg) 0 0;overflow-y:auto;
+    box-shadow:0 -4px 24px rgba(0,0,0,.4);
+  " onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title-row">
+      <h2 id="ct-modal-title" style="font-family:var(--fd);font-size:1.4rem">🎨 Create Custom Theme</h2>
+      <button class="btn icon" onclick="closeCustomThemeCreator()">✕</button>
+    </div>
+    
+    <div style="padding:0 20px 32px">
+      <!-- Theme Name -->
+      <div style="margin-bottom:20px">
+        <label style="display:block;font-size:12px;font-weight:500;margin-bottom:6px;color:var(--text2)">Theme Name</label>
+        <input type="text" id="ct-name" placeholder="My Custom Theme" style="
+          width:100%;background:var(--bg2);border:1.5px solid var(--border);
+          color:var(--text);border-radius:10px;padding:10px 12px;
+          font-family:var(--fb);font-size:14px;outline:none;
+        " onkeyup="updateCustomThemePreview()">
+      </div>
+      
+      <!-- Light/Dark Mode Toggle -->
+      <div style="margin-bottom:20px">
+        <label style="display:block;font-size:12px;font-weight:500;margin-bottom:8px;color:var(--text2)">Mode</label>
+        <div style="display:flex;gap:8px">
+          <button class="btn sm" id="ct-mode-dark" onclick="setCustomThemeMode('dark')" style="flex:1">🌙 Dark</button>
+          <button class="btn sm" id="ct-mode-light" onclick="setCustomThemeMode('light')" style="flex:1">☀️ Light</button>
+        </div>
+      </div>
+      
+      <!-- Color Pickers -->
+      <div style="margin-bottom:20px">
+        <div class="ct-color-row">
+          <label>Background</label>
+          <input type="color" id="ct-bg" onchange="updateCustomThemePreview()">
+        </div>
+        <div class="ct-color-row">
+          <label>Card Color</label>
+          <input type="color" id="ct-card" onchange="updateCustomThemePreview()">
+        </div>
+        <div class="ct-color-row">
+          <label>Primary Color</label>
+          <input type="color" id="ct-primary" onchange="updateCustomThemePreview()">
+        </div>
+        <div class="ct-color-row">
+          <label>Secondary Color</label>
+          <input type="color" id="ct-secondary" onchange="updateCustomThemePreview()">
+        </div>
+        <div class="ct-color-row">
+          <label>Tertiary Color</label>
+          <input type="color" id="ct-tertiary" onchange="updateCustomThemePreview()">
+        </div>
+        <div class="ct-color-row">
+          <label>Quaternary Color</label>
+          <input type="color" id="ct-quaternary" onchange="updateCustomThemePreview()">
+        </div>
+      </div>
+      
+      <!-- Background Image (optional) -->
+      <div style="margin-bottom:20px">
+        <label style="display:block;font-size:12px;font-weight:500;margin-bottom:8px;color:var(--text2)">Background Image (optional)</label>
+        
+        <!-- Background mode selector -->
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+          <label style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--bg2);border-radius:8px;cursor:pointer;border:2px solid var(--border);" id="bg-mode-none-label">
+            <input type="radio" name="bg-mode" value="none" id="bg-mode-none" onchange="setBackgroundMode('none')" style="width:16px;height:16px;cursor:pointer">
+            <span style="font-size:13px;color:var(--text)">No background</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--bg2);border-radius:8px;cursor:pointer;border:2px solid var(--border);" id="bg-mode-nebula-label">
+            <input type="radio" name="bg-mode" value="nebula" id="bg-mode-nebula" onchange="setBackgroundMode('nebula')" checked style="width:16px;height:16px;cursor:pointer">
+            <span style="font-size:13px;color:var(--text)">Nebula animation (auto-colors)</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--bg2);border-radius:8px;cursor:pointer;border:2px solid var(--border);" id="bg-mode-image-label">
+            <input type="radio" name="bg-mode" value="image" id="bg-mode-image" onchange="setBackgroundMode('image')" style="width:16px;height:16px;cursor:pointer">
+            <span style="font-size:13px;color:var(--text)">Custom image</span>
+          </label>
+        </div>
+        
+        <!-- Image upload controls (hidden by default) -->
+        <div id="bg-image-controls" style="display:none">
+          <input type="file" id="bg-image-input" accept="image/*" onchange="handleBackgroundImageUpload(event)" style="display:none">
+          <button class="btn sm" onclick="document.getElementById('bg-image-input').click()" style="width:100%;margin-bottom:8px">📁 Upload Image</button>
+          
+          <div id="bg-image-preview" style="display:none;margin-bottom:8px">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Preview:</div>
+            <img id="bg-image-preview-img" style="width:100%;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">
+          </div>
+          
+          <div id="bg-opacity-control" style="display:none">
+            <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Opacity: <span id="bg-opacity-value">30</span>%</label>
+            <input type="range" id="bg-opacity-slider" min="10" max="100" value="30" oninput="updateBackgroundOpacity(this.value)" style="width:100%">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Live Preview -->
+      <div style="margin-bottom:20px">
+        <label style="display:block;font-size:12px;font-weight:500;margin-bottom:8px;color:var(--text2)">Live Preview</label>
+        <div id="ct-preview" style="
+          border:1px solid var(--border);border-radius:var(--r);overflow:hidden;
+          background:var(--bg);padding:12px;position:relative;
+        ">
+          <div id="ct-preview-bg" style="position:absolute;inset:0;z-index:0;pointer-events:none"></div>
+          <div id="ct-preview-content" style="position:relative;z-index:1">
+            <!-- Preview content will be injected here -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- Action Buttons -->
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="closeCustomThemeCreator()" style="flex:1">Cancel</button>
+        <button class="btn primary" onclick="saveCustomTheme()" style="flex:1">💾 Save Theme</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -3171,6 +3333,13 @@ const THEME_FONT_DEFAULTS = {
 function applyTheme() {
   const t = S.theme || 'cosmic';
   const m = S.mode  || 'dark';
+  
+  // Check if this is a custom theme
+  if (t.startsWith('custom-') && appState.customThemes?.[t]) {
+    applyCustomTheme(t);
+    return;
+  }
+  
   document.body.setAttribute('data-theme', t);
   document.body.setAttribute('data-mode',  m);
 
@@ -3231,6 +3400,7 @@ function _renderThemePicker() {
   const list = document.getElementById('theme-picker-list');
   list.innerHTML = '';
 
+  // Render built-in themes
   THEMES.forEach(th => {
     const prev = THEME_PREVIEWS[th.id];
     const isSelected = S.theme === th.id;
@@ -3261,6 +3431,113 @@ function _renderThemePicker() {
     });
     list.appendChild(card);
   });
+  
+  // Render custom themes
+  if (appState.customThemes && Object.keys(appState.customThemes).length > 0) {
+    const divider = document.createElement('div');
+    divider.style.cssText = 'font-size:11px;color:var(--text3);margin:16px 0 8px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px';
+    divider.textContent = 'Custom Themes';
+    list.appendChild(divider);
+    
+    Object.values(appState.customThemes).forEach(ct => {
+      const isSelected = S.theme === ct.id;
+      const card = document.createElement('div');
+      card.className = 'theme-picker-card' + (isSelected ? ' selected' : '');
+      
+      const dotsHtml = [ct.colors.primary, ct.colors.secondary, ct.colors.tertiary].map(c =>
+        `<div style="width:10px;height:10px;border-radius:50%;background:${c};flex-shrink:0"></div>`
+      ).join('');
+      
+      const bg2 = ct.mode === 'dark' ? lighten(ct.colors.bg, 5) : lighten(ct.colors.bg, 3);
+      const previewBg = `linear-gradient(135deg,${ct.colors.bg},${bg2})`;
+      
+      card.innerHTML = `
+        <div class="tp-preview" style="background:${previewBg}">
+          <div style="display:flex;gap:4px">${dotsHtml}</div>
+        </div>
+        <div class="tp-info">
+          <div class="tp-name">✨ ${ct.name}</div>
+          <div class="tp-desc">Custom ${ct.mode} theme</div>
+        </div>
+        ${isSelected ? '<div style="color:var(--accent);font-size:1.1rem;flex-shrink:0">✓</div>' : ''}
+        <button class="btn icon" onclick="event.stopPropagation();editCustomTheme('${ct.id}')" style="margin-left:8px" title="Edit theme">✏️</button>
+        <button class="btn icon" onclick="event.stopPropagation();deleteCustomTheme('${ct.id}')" style="margin-left:4px" title="Delete theme">🗑</button>
+      `;
+      card.addEventListener('click', () => {
+        if (S.theme !== ct.id) applyCustomTheme(ct.id);
+        closeThemePicker();
+      });
+      list.appendChild(card);
+    });
+  }
+}
+
+function deleteCustomTheme(themeId) {
+  if (!confirm('Delete this custom theme?')) return;
+  
+  delete appState.customThemes[themeId];
+  save();
+  
+  // If currently using this theme, switch to cosmic
+  if (S.theme === themeId) {
+    pickThemeMode('cosmic', 'dark');
+  }
+  
+  _renderThemePicker();
+  showToast('🗑 Custom theme deleted');
+}
+
+function editCustomTheme(themeId) {
+  const customTheme = appState.customThemes?.[themeId];
+  if (!customTheme) return;
+  
+  // Set modal title
+  document.getElementById('ct-modal-title').textContent = '✏️ Edit Custom Theme';
+  
+  // Populate the form with existing theme data
+  customThemeMode = customTheme.mode;
+  customThemeBgMode = customTheme.background?.mode || 'nebula';
+  customThemeBgImage = customTheme.background?.image || null;
+  customThemeBgOpacity = customTheme.background?.opacity || 30;
+  
+  document.getElementById('ct-name').value = customTheme.name;
+  document.getElementById('ct-bg').value = customTheme.colors.bg;
+  document.getElementById('ct-card').value = customTheme.colors.card || customTheme.colors.bg; // Fallback for old themes
+  document.getElementById('ct-primary').value = customTheme.colors.primary;
+  document.getElementById('ct-secondary').value = customTheme.colors.secondary;
+  document.getElementById('ct-tertiary').value = customTheme.colors.tertiary;
+  document.getElementById('ct-quaternary').value = customTheme.colors.quaternary;
+  
+  // Set mode buttons
+  setCustomThemeMode(customTheme.mode);
+  
+  // Set background mode
+  if (customThemeBgMode === 'none') {
+    document.getElementById('bg-mode-none').checked = true;
+  } else if (customThemeBgMode === 'nebula') {
+    document.getElementById('bg-mode-nebula').checked = true;
+  } else if (customThemeBgMode === 'image') {
+    document.getElementById('bg-mode-image').checked = true;
+  }
+  setBackgroundMode(customThemeBgMode);
+  
+  // If there's a background image, show it
+  if (customThemeBgImage) {
+    document.getElementById('bg-image-preview').style.display = 'block';
+    document.getElementById('bg-opacity-control').style.display = 'block';
+    document.getElementById('bg-image-preview-img').src = customThemeBgImage;
+    document.getElementById('bg-opacity-slider').value = customThemeBgOpacity;
+    document.getElementById('bg-opacity-value').textContent = customThemeBgOpacity;
+  }
+  
+  updateCustomThemePreview();
+  
+  // Store the ID we're editing
+  window._editingThemeId = themeId;
+  
+  // Open the creator modal
+  document.getElementById('theme-picker-overlay').classList.remove('open');
+  document.getElementById('custom-theme-overlay').classList.add('open');
 }
 
 /** Pick a theme and optionally a specific mode. Resets font to theme default. */
@@ -3288,17 +3565,631 @@ function pickTheme(t) {
 }
 
 function toggleMode() {
-  const th = THEMES.find(t => t.id === S.theme);
-  const modes = th?.modes || ['dark','light'];
-  const next = S.mode === 'dark' ? 'light' : 'dark';
-  S.mode = modes.includes(next) ? next : modes[0];
+  // For custom themes, always allow toggle between dark/light
+  if (S.theme.startsWith('custom-')) {
+    const next = S.mode === 'dark' ? 'light' : 'dark';
+    S.mode = next;
+    
+    // Update custom theme mode and regenerate
+    const customTheme = appState.customThemes?.[S.theme];
+    if (customTheme) {
+      customTheme.mode = next;
+      customTheme.css = generateCustomTheme(
+        customTheme.colors.bg,
+        customTheme.colors.card || customTheme.colors.bg, // Fallback for old themes
+        customTheme.colors.primary,
+        customTheme.colors.secondary,
+        customTheme.colors.tertiary,
+        customTheme.colors.quaternary,
+        next
+      );
+    }
+  } else {
+    const th = THEMES.find(t => t.id === S.theme);
+    const modes = th?.modes || ['dark','light'];
+    const next = S.mode === 'dark' ? 'light' : 'dark';
+    S.mode = modes.includes(next) ? next : modes[0];
+  }
+  
   applyTheme();
   _updateSettingsThemeRow();
   save();
 }
 
+/* ══════════════════════════════════════════════════════════════
+   CUSTOM THEME CREATOR
+   ══════════════════════════════════════════════════════════════ */
+
+// Color utility functions
+function hexToRgb(hex) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+}
+
+function rgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+  if (max === min) {
+    h = s = 0;
+  } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+      case g: h = ((b - r) / d + 2) / 6; break;
+      case b: h = ((r - g) / d + 4) / 6; break;
+    }
+  }
+  return { h: h * 360, s: s * 100, l: l * 100 };
+}
+
+function hexToHsl(hex) {
+  const rgb = hexToRgb(hex);
+  return rgb ? rgbToHsl(rgb.r, rgb.g, rgb.b) : { h: 0, s: 0, l: 0 };
+}
+
+function hslToHex(h, s, l) {
+  s /= 100; l /= 100;
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+  const m = l - c / 2;
+  let r = 0, g = 0, b = 0;
+  if (0 <= h && h < 60) { r = c; g = x; b = 0; }
+  else if (60 <= h && h < 120) { r = x; g = c; b = 0; }
+  else if (120 <= h && h < 180) { r = 0; g = c; b = x; }
+  else if (180 <= h && h < 240) { r = 0; g = x; b = c; }
+  else if (240 <= h && h < 300) { r = x; g = 0; b = c; }
+  else if (300 <= h && h < 360) { r = c; g = 0; b = x; }
+  r = Math.round((r + m) * 255);
+  g = Math.round((g + m) * 255);
+  b = Math.round((b + m) * 255);
+  return "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+function lighten(hex, percent) {
+  const hsl = hexToHsl(hex);
+  hsl.l = Math.min(100, hsl.l + percent);
+  return hslToHex(hsl.h, hsl.s, hsl.l);
+}
+
+function darken(hex, percent) {
+  const hsl = hexToHsl(hex);
+  hsl.l = Math.max(0, hsl.l - percent);
+  return hslToHex(hsl.h, hsl.s, hsl.l);
+}
+
+function getContrastText(bgHex) {
+  const rgb = hexToRgb(bgHex);
+  if (!rgb) return '#ffffff';
+  // Calculate relative luminance
+  const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+  return luminance > 0.5 ? '#1a1a1a' : '#f0f0f0';
+}
+
+// Modal controls
+let customThemeMode = 'dark';
+let customThemeBgMode = 'nebula'; // 'none', 'nebula', 'image'
+let customThemeBgImage = null; // base64 image data
+let customThemeBgOpacity = 30;
+
+function openCustomThemeCreator(editId = null) {
+  console.log('openCustomThemeCreator called');
+  
+  // Clear editing mode
+  window._editingThemeId = null;
+  
+  // Set modal title
+  document.getElementById('ct-modal-title').textContent = '🎨 Create Custom Theme';
+  
+  // Get current theme colors as starting point
+  const currentTheme = appState.customThemes?.[S.theme];
+  let startColors, startMode, startBg;
+  
+  if (currentTheme) {
+    // Starting from a custom theme - use its colors
+    startColors = currentTheme.colors;
+    startMode = currentTheme.mode;
+    startBg = currentTheme.background || { mode: 'nebula', image: null, opacity: 30 };
+  } else {
+    // Starting from a built-in theme - extract colors from CSS variables
+    // Must use body's computed style to get theme-specific values
+    const body = document.body;
+    
+    // Helper to get CSS variable value from body's computed style
+    const getCSSVar = (varName) => {
+      return getComputedStyle(body).getPropertyValue(varName).trim();
+    };
+    
+    // Get colors from CSS variables
+    const bgVar = getCSSVar('--bg');
+    const cardVar = getCSSVar('--surface');
+    const accentVar = getCSSVar('--accent');
+    const accent2Var = getCSSVar('--accent2');
+    const goldVar = getCSSVar('--gold');
+    const nightVar = getCSSVar('--night');
+    
+    console.log('Extracting colors from body:', { bgVar, cardVar, accentVar, accent2Var, goldVar, nightVar });
+    
+    // Convert RGB to hex
+    const rgbToHex = (rgb) => {
+      // Handle already hex
+      if (rgb.startsWith('#')) return rgb;
+      
+      // Handle rgb(r, g, b) format
+      const match = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        const r = parseInt(match[1]).toString(16).padStart(2, '0');
+        const g = parseInt(match[2]).toString(16).padStart(2, '0');
+        const b = parseInt(match[3]).toString(16).padStart(2, '0');
+        return `#${r}${g}${b}`;
+      }
+      
+      return '#140828'; // fallback
+    };
+    
+    startColors = {
+      bg: rgbToHex(bgVar),
+      card: rgbToHex(cardVar),
+      primary: rgbToHex(accentVar),
+      secondary: rgbToHex(accent2Var),
+      tertiary: rgbToHex(goldVar),
+      quaternary: rgbToHex(nightVar)
+    };
+    
+    console.log('Converted to hex:', startColors);
+    
+    startMode = S.mode;
+    startBg = { mode: 'nebula', image: null, opacity: 30 };
+  }
+  
+  // Initialize with current theme's colors
+  customThemeMode = startMode;
+  customThemeBgMode = startBg.mode;
+  customThemeBgImage = startBg.image;
+  customThemeBgOpacity = startBg.opacity || 30;
+  
+  document.getElementById('ct-name').value = '';
+  
+  // Set background mode
+  if (startBg.mode === 'none') {
+    document.getElementById('bg-mode-none').checked = true;
+  } else if (startBg.mode === 'image') {
+    document.getElementById('bg-mode-image').checked = true;
+  } else {
+    document.getElementById('bg-mode-nebula').checked = true;
+  }
+  setBackgroundMode(startBg.mode);
+  
+  // If there's a background image, show it
+  if (startBg.image) {
+    document.getElementById('bg-image-preview').style.display = 'block';
+    document.getElementById('bg-opacity-control').style.display = 'block';
+    document.getElementById('bg-image-preview-img').src = startBg.image;
+    document.getElementById('bg-opacity-slider').value = startBg.opacity;
+    document.getElementById('bg-opacity-value').textContent = startBg.opacity;
+  } else {
+    document.getElementById('bg-image-controls').style.display = 'none';
+    document.getElementById('bg-image-preview').style.display = 'none';
+    document.getElementById('bg-opacity-control').style.display = 'none';
+  }
+  
+  console.log('Closing theme picker...');
+  document.getElementById('theme-picker-overlay').classList.remove('open');
+  
+  console.log('Opening custom theme overlay...');
+  const overlay = document.getElementById('custom-theme-overlay');
+  console.log('Custom theme overlay element:', overlay);
+  overlay.classList.add('open');
+  console.log('Custom theme overlay classes:', overlay.className);
+  
+  // Use requestAnimationFrame to ensure the modal is fully rendered before setting values
+  requestAnimationFrame(() => {
+    console.log('Setting values after render...');
+    document.getElementById('ct-bg').value = startColors.bg;
+    document.getElementById('ct-card').value = startColors.card || startColors.bg;
+    document.getElementById('ct-primary').value = startColors.primary;
+    document.getElementById('ct-secondary').value = startColors.secondary;
+    document.getElementById('ct-tertiary').value = startColors.tertiary;
+    document.getElementById('ct-quaternary').value = startColors.quaternary;
+    
+    console.log('Values set! Current picker values:', {
+      bg: document.getElementById('ct-bg').value,
+      card: document.getElementById('ct-card').value,
+      primary: document.getElementById('ct-primary').value,
+      secondary: document.getElementById('ct-secondary').value,
+      tertiary: document.getElementById('ct-tertiary').value,
+      quaternary: document.getElementById('ct-quaternary').value
+    });
+    
+    setCustomThemeMode(startMode);
+    updateCustomThemePreview();
+  });
+}
+
+function closeCustomThemeCreator() {
+  document.getElementById('custom-theme-overlay').classList.remove('open');
+}
+
+function handleCustomThemeOverlayClick(e) {
+  if (e.target === document.getElementById('custom-theme-overlay')) {
+    closeCustomThemeCreator();
+  }
+}
+
+function setCustomThemeMode(mode) {
+  customThemeMode = mode;
+  document.getElementById('ct-mode-dark').classList.toggle('active', mode === 'dark');
+  document.getElementById('ct-mode-light').classList.toggle('active', mode === 'light');
+  updateCustomThemePreview();
+}
+
+function setBackgroundMode(mode) {
+  customThemeBgMode = mode;
+  const controls = document.getElementById('bg-image-controls');
+  controls.style.display = mode === 'image' ? 'block' : 'none';
+  updateCustomThemePreview();
+}
+
+function handleBackgroundImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  // Check file size (max 500KB)
+  if (file.size > 500 * 1024) {
+    showToast('⚠️ Image too large! Please use an image under 500KB');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    customThemeBgImage = e.target.result;
+    
+    // Show preview
+    document.getElementById('bg-image-preview').style.display = 'block';
+    document.getElementById('bg-opacity-control').style.display = 'block';
+    document.getElementById('bg-image-preview-img').src = customThemeBgImage;
+    
+    updateCustomThemePreview();
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateBackgroundOpacity(value) {
+  customThemeBgOpacity = parseInt(value);
+  document.getElementById('bg-opacity-value').textContent = value;
+  updateCustomThemePreview();
+}
+
+// Generate theme from 6 colors
+function generateCustomTheme(bgColor, cardColor, primary, secondary, tertiary, quaternary, mode) {
+  const isDark = mode === 'dark';
+  const rgb = hexToRgb(primary);
+  
+  // Background progression
+  const bg = bgColor;
+  const bg2 = isDark ? lighten(bg, 5) : lighten(bg, 3);
+  const surface = cardColor; // Use user-picked card color
+  const surface2 = isDark ? lighten(cardColor, 5) : lighten(cardColor, 3);
+  
+  // Text (auto-contrast based on CARD color, not background)
+  const textBase = getContrastText(cardColor);
+  const textRgb = hexToRgb(textBase);
+  const text = textBase;
+  const text2 = `rgba(${textRgb.r},${textRgb.g},${textRgb.b},0.7)`;
+  const text3 = `rgba(${textRgb.r},${textRgb.g},${textRgb.b},0.45)`;
+  
+  // Borders (from primary)
+  const border = `rgba(${rgb.r},${rgb.g},${rgb.b},0.15)`;
+  const borderMed = `rgba(${rgb.r},${rgb.g},${rgb.b},0.3)`;
+  
+  // Glow
+  const glow = `rgba(${rgb.r},${rgb.g},${rgb.b},0.3)`;
+  
+  // Card (with opacity from cardColor)
+  const cardRgb = hexToRgb(cardColor);
+  const card = `rgba(${cardRgb.r},${cardRgb.g},${cardRgb.b},0.9)`;
+  
+  // Gold glow (brighten tertiary)
+  const goldGlow = lighten(tertiary, 15);
+  
+  // Button text (calculate contrast for gradient buttons)
+  // Use the primary color to determine if we need dark or light text
+  const btnText = getContrastText(primary);
+  
+  return {
+    '--bg': bg,
+    '--bg2': bg2,
+    '--surface': surface,
+    '--surface2': surface2,
+    '--border': border,
+    '--border-med': borderMed,
+    '--accent': primary,
+    '--accent2': secondary,
+    '--gold': tertiary,
+    '--gold-glow': goldGlow,
+    '--night': quaternary,
+    '--text': text,
+    '--text2': text2,
+    '--text3': text3,
+    '--card': card,
+    '--glow': glow,
+    '--danger': '#f43f5e',
+    '--btn-text': btnText
+  };
+}
+
+function updateCustomThemePreview() {
+  const bg = document.getElementById('ct-bg').value;
+  const card = document.getElementById('ct-card').value;
+  const primary = document.getElementById('ct-primary').value;
+  const secondary = document.getElementById('ct-secondary').value;
+  const tertiary = document.getElementById('ct-tertiary').value;
+  const quaternary = document.getElementById('ct-quaternary').value;
+  
+  const theme = generateCustomTheme(bg, card, primary, secondary, tertiary, quaternary, customThemeMode);
+  
+  // Apply to preview container
+  const preview = document.getElementById('ct-preview');
+  Object.keys(theme).forEach(key => {
+    preview.style.setProperty(key, theme[key]);
+  });
+  
+  // Apply background
+  const previewBg = document.getElementById('ct-preview-bg');
+  if (customThemeBgMode === 'none') {
+    previewBg.style.background = 'none';
+  } else if (customThemeBgMode === 'nebula') {
+    const rgb1 = hexToRgb(primary);
+    const rgb2 = hexToRgb(secondary);
+    const rgb3 = hexToRgb(tertiary);
+    previewBg.style.background = `
+      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(${rgb1.r},${rgb1.g},${rgb1.b},0.16), transparent 70%),
+      radial-gradient(ellipse 50% 35% at 80% 70%, rgba(${rgb2.r},${rgb2.g},${rgb2.b},0.13), transparent 70%),
+      radial-gradient(ellipse 40% 30% at 60% 10%, rgba(${rgb3.r},${rgb3.g},${rgb3.b},0.1), transparent 70%)
+    `;
+  } else if (customThemeBgMode === 'image' && customThemeBgImage) {
+    previewBg.style.background = `url(${customThemeBgImage})`;
+    previewBg.style.backgroundSize = 'cover';
+    previewBg.style.backgroundPosition = 'center';
+    previewBg.style.opacity = customThemeBgOpacity / 100;
+  }
+  
+  // Render preview content
+  const previewContent = document.getElementById('ct-preview-content');
+  previewContent.innerHTML = `
+    <div style="
+      height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--gold));
+      margin-bottom:12px;border-radius:2px;
+    "></div>
+    <div style="
+      background:var(--surface2);border-radius:8px;padding:10px;margin-bottom:10px;
+      border-top:2px solid var(--accent);
+      background:linear-gradient(135deg,var(--accent),var(--gold));
+      -webkit-background-clip:text;background-clip:text;
+      -webkit-text-fill-color:transparent;
+      font-weight:700;font-size:18px;
+    ">🔥 5</div>
+    <div style="padding:8px;border-left:3px solid var(--accent);background:var(--surface2);border-radius:6px;margin-bottom:6px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:4px">🌅 Morning</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));flex-shrink:0"></div>
+        <span style="font-size:13px;color:var(--text)">Meditation</span>
+      </div>
+    </div>
+    <div style="padding:8px;border-left:3px solid var(--gold);background:var(--surface2);border-radius:6px;margin-bottom:6px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:4px">☀️ Afternoon</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:16px;height:16px;border-radius:50%;border:2px solid var(--border-med);flex-shrink:0"></div>
+        <span style="font-size:13px;color:var(--text)">Deep Work</span>
+      </div>
+    </div>
+    <div style="padding:8px;border-left:3px solid var(--accent2);background:var(--surface2);border-radius:6px;margin-bottom:6px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:4px">🌙 Evening</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:16px;height:16px;border-radius:50%;border:2px solid var(--border-med);flex-shrink:0"></div>
+        <span style="font-size:13px;color:var(--text)">Reading</span>
+      </div>
+    </div>
+    <div style="padding:8px;border-left:3px solid var(--night);background:var(--surface2);border-radius:6px;margin-bottom:10px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:4px">🌌 Night</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:16px;height:16px;border-radius:50%;border:2px solid var(--border-med);flex-shrink:0"></div>
+        <span style="font-size:13px;color:var(--text)">Wind down</span>
+      </div>
+    </div>
+    <button style="
+      padding:8px 16px;border-radius:8px;border:none;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:var(--btn-text);font-size:13px;font-weight:600;cursor:pointer;
+      font-family:var(--fb);width:100%;
+    ">Start Timer</button>
+  `;
+}
+
+function saveCustomTheme() {
+  const name = document.getElementById('ct-name').value.trim() || 'My Theme';
+  const bg = document.getElementById('ct-bg').value;
+  const card = document.getElementById('ct-card').value;
+  const primary = document.getElementById('ct-primary').value;
+  const secondary = document.getElementById('ct-secondary').value;
+  const tertiary = document.getElementById('ct-tertiary').value;
+  const quaternary = document.getElementById('ct-quaternary').value;
+  
+  // Check if we're editing an existing theme
+  const isEditing = !!window._editingThemeId;
+  const themeId = isEditing 
+    ? window._editingThemeId 
+    : 'custom-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  
+  const theme = generateCustomTheme(bg, card, primary, secondary, tertiary, quaternary, customThemeMode);
+  
+  // Save to localStorage
+  if (!appState.customThemes) appState.customThemes = {};
+  appState.customThemes[themeId] = {
+    id: themeId,
+    name: name,
+    mode: customThemeMode,
+    colors: { bg, card, primary, secondary, tertiary, quaternary },
+    css: theme,
+    background: {
+      mode: customThemeBgMode,
+      image: customThemeBgImage,
+      opacity: customThemeBgOpacity
+    }
+  };
+  
+  save();
+  
+  // Apply the theme (whether new or edited)
+  applyCustomTheme(themeId);
+  
+  closeCustomThemeCreator();
+  closeThemePicker();
+  
+  // Clear editing mode
+  window._editingThemeId = null;
+  
+  showToast(isEditing ? `✏️ Theme "${name}" updated!` : `✨ Custom theme "${name}" created!`);
+}
+
+function applyCustomTheme(themeId) {
+  const customTheme = appState.customThemes?.[themeId];
+  if (!customTheme) return;
+  
+  // Apply CSS variables
+  const root = document.documentElement;
+  Object.keys(customTheme.css).forEach(key => {
+    root.style.setProperty(key, customTheme.css[key]);
+  });
+  
+  // Set body attributes
+  document.body.setAttribute('data-theme', themeId);
+  document.body.setAttribute('data-mode', customTheme.mode);
+  
+  // Apply font
+  const fontId = S.font || 'sans';
+  const font = FONTS.find(f => f.id === fontId) || FONTS[0];
+  document.body.style.setProperty('--fb', font.fb);
+  document.body.style.setProperty('--fd', font.fd);
+  document.body.style.setProperty('--fm', font.fm);
+  document.body.setAttribute('data-font', fontId);
+  
+  // Update meta theme color
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (metaTheme) {
+    metaTheme.content = customTheme.colors.bg;
+  }
+  
+  // Update appState
+  S.theme = themeId;
+  S.mode = customTheme.mode;
+  
+  // Apply background (nebula, image, or none)
+  _applyCustomBackground(customTheme);
+  
+  // Update settings display
+  _updateSettingsThemeRow();
+  
+  save();
+}
+
+function _applyCustomBackground(customTheme) {
+  // Remove existing custom background style if any
+  const existing = document.getElementById('custom-bg-style');
+  if (existing) existing.remove();
+  
+  const bgSettings = customTheme.background || { mode: 'nebula' };
+  
+  const style = document.createElement('style');
+  style.id = 'custom-bg-style';
+  
+  if (bgSettings.mode === 'none') {
+    // No background
+    style.textContent = `
+      body[data-theme^="custom-"]::before {
+        display: none !important;
+      }
+    `;
+  } else if (bgSettings.mode === 'image' && bgSettings.image) {
+    // Custom image
+    style.textContent = `
+      body[data-theme^="custom-"]::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        background-image: url(${bgSettings.image});
+        background-size: cover;
+        background-position: center;
+        opacity: ${(bgSettings.opacity || 30) / 100};
+      }
+      body[data-theme^="custom-"][data-mode="light"]::before {
+        opacity: ${(bgSettings.opacity || 30) / 100};
+      }
+    `;
+  } else {
+    // Nebula animation (default)
+    if (customTheme.mode === 'light') {
+      style.textContent = `
+        body[data-theme^="custom-"]::before {
+          display: none !important;
+        }
+      `;
+    } else {
+      const rgb1 = hexToRgb(customTheme.colors.primary);
+      const rgb2 = hexToRgb(customTheme.colors.secondary);
+      const rgb3 = hexToRgb(customTheme.colors.tertiary);
+      
+      style.textContent = `
+        body[data-theme^="custom-"]::before {
+          content: '';
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          z-index: 0;
+          background:
+            radial-gradient(ellipse 60% 40% at 20% 20%, rgba(${rgb1.r},${rgb1.g},${rgb1.b},0.16), transparent 70%),
+            radial-gradient(ellipse 50% 35% at 80% 70%, rgba(${rgb2.r},${rgb2.g},${rgb2.b},0.13), transparent 70%),
+            radial-gradient(ellipse 40% 30% at 60% 10%, rgba(${rgb3.r},${rgb3.g},${rgb3.b},0.1), transparent 70%);
+          animation: nebula 20s ease-in-out infinite alternate;
+        }
+      `;
+    }
+  }
+  
+  document.head.appendChild(style);
+}
+
+function _applyCustomNebula(primary, secondary, tertiary, mode) {
+  // Legacy function - now redirects to _applyCustomBackground
+  // Kept for backwards compatibility
+  _applyCustomBackground({
+    colors: { primary, secondary, tertiary },
+    mode: mode,
+    background: { mode: 'nebula' }
+  });
+}
+
 function _updateSettingsThemeRow() {
-  const th = THEMES.find(t => t.id === S.theme);
+  // Check if custom theme
+  let th = THEMES.find(t => t.id === S.theme);
+  let themeName = th ? `${th.icon} ${th.name}` : S.theme;
+  let themeIcon = th?.icon || '✨';
+  
+  if (S.theme.startsWith('custom-')) {
+    const customTheme = appState.customThemes?.[S.theme];
+    if (customTheme) {
+      themeName = `✨ ${customTheme.name}`;
+      themeIcon = '✨';
+    }
+  }
+  
   const fontId = S.font || THEME_FONT_DEFAULTS[S.theme] || 'sans';
   const font = FONTS.find(f => f.id === fontId) || FONTS[0];
   const isDark = S.mode !== 'light';
@@ -3306,14 +4197,15 @@ function _updateSettingsThemeRow() {
   // Theme name row
   const nameEl = document.getElementById('settings-theme-name');
   const modeEl = document.getElementById('settings-theme-mode');
-  if (nameEl) nameEl.textContent = th ? `${th.icon} ${th.name}` : S.theme;
+  if (nameEl) nameEl.textContent = themeName;
   if (modeEl) modeEl.textContent = `${isDark ? 'Dark' : 'Light'} · ${font?.label || 'Sans'}`;
 
-  // Mode row — hide for journal (light only)
+  // Mode row — show for all custom themes and most built-in themes
   const modeRow = document.getElementById('settings-mode-row');
   const modeSub = document.getElementById('settings-mode-sub');
   const modeBtn = document.getElementById('settings-mode-btn');
-  if (modeRow) modeRow.style.display = th?.modes?.length === 1 ? 'none' : '';
+  const hideMode = th?.modes?.length === 1 && !S.theme.startsWith('custom-');
+  if (modeRow) modeRow.style.display = hideMode ? 'none' : '';
   if (modeSub) modeSub.textContent = isDark ? 'Dark mode active' : 'Light mode active';
   if (modeBtn) modeBtn.textContent = isDark ? '☀ Light' : '☾ Dark';
 
@@ -3617,7 +4509,6 @@ function obGo(id){
   const el=document.getElementById(id);if(el){el.classList.add('active');window.scrollTo(0,0)}
   document.getElementById('progress-bar').style.width=(OB_PROG[id]??0)+'%';
   if(id==='ob-welcome') _obInitWelcome();
-  if(id==='ob-blocks')renderObBlocks();
 }
 
 function obQuickAdd(name, section) {
@@ -3672,41 +4563,6 @@ function obFinish() {
   // Show daily screen and render
   navTo('dash'); // This handles screen switching properly
   renderDash();
-}
-
-function obSaveName(){S.userName=document.getElementById('inp-name').value.trim();obGo('ob-blocks')}
-let obActiveSec='';
-function renderObBlocks(){
-  const secs = getSections();
-  if(!obActiveSec || !secs.find(s => s.id === obActiveSec)) obActiveSec = secs[0]?.id || 'morning';
-  const tabs=document.getElementById('ob-sec-tabs');tabs.innerHTML='';
-  secs.forEach(sec=>{
-    const b=document.createElement('button');
-    b.className='sec-tab'+(obActiveSec===sec.id?' active':'');
-    b.textContent=sec.emoji+' '+sec.name;
-    b.onclick=()=>{obActiveSec=sec.id;renderObBlocks()};
-    tabs.appendChild(b);
-  });
-
-  // Suggestions as grid chips
-  const sg=document.getElementById('ob-suggestions');sg.innerHTML='';
-  const tmplBlocks=_globalBlocks();
-  (SUGE[obActiveSec]||[]).forEach(s=>{
-    const n=s.split(' ')[0];
-    const already=tmplBlocks.some(b=>b.name.startsWith(n)&&b.section===obActiveSec);
-    const c=document.createElement('div');
-    c.className='sug-chip'+(already?' added':'');
-    c.textContent=s;
-    c.onclick=()=>{
-      if(already)return;
-      tmplBlocks.push(mkBlock({name:s,section:obActiveSec}));
-      save();renderObBlocks();
-    };
-    sg.appendChild(c);
-  });
-
-  // Blocks list
-  renderBlockList('ob-block-list',obActiveSec,true,tmplBlocks);
 }
 
 function mkBlock(o={}){
@@ -3972,8 +4828,7 @@ const Drag = {
   },
 
   _rerender() {
-    if (this.context === 'ob-block-list') renderObBlocks();
-    else if (this.context === 'blocks-list') renderDash();
+    if (this.context === 'blocks-list') renderDash();
     else if (this.context === 'routine-list') renderRoutine();
   }
 };
@@ -4452,7 +5307,6 @@ function saveBlock(){
   if(editId){const i=tmpl.findIndex(b=>b.id===editId);if(i>-1)tmpl[i]=block;else tmpl.push(block)}
   else tmpl.push(block);
   save(); closeEditor();
-  if(document.getElementById('ob-blocks')?.classList.contains('active')) renderObBlocks();
   renderDash();
   renderRoutine();
 }
