@@ -1399,12 +1399,18 @@ body[data-theme="journal"]{
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
       <span style="font-size:24px">🤖</span>
-      <div>
-        <div style="font-weight:500;font-size:14px">Let AI help you plan</div>
-        <div style="font-size:12px;color:var(--text3)">Export a file and chat with Claude to design your routine</div>
+      <div style="flex:1">
+        <div style="font-weight:500;font-size:14px;margin-bottom:4px">Let AI help you plan</div>
+        <div style="font-size:12px;color:var(--text3);line-height:1.4">
+          1. Click button below to download a file<br>
+          2. Go to <a href="https://claude.ai" target="_blank" style="color:var(--accent);text-decoration:none">claude.ai</a> and upload the file<br>
+          3. Chat about your ideal routine<br>
+          4. Download Claude's JSON file<br>
+          5. Import it back here (Settings → Import)
+        </div>
       </div>
     </div>
-    <button class="btn sm" onclick="exportForAI()" style="width:100%;margin-top:8px">Export for AI Planning</button>
+    <button class="btn sm" onclick="exportForAI()" style="width:100%;margin-top:8px">📤 Export for AI Planning</button>
   </div>
   
   <div style="text-align:center;margin-bottom:16px">
@@ -2063,6 +2069,20 @@ body[data-theme="journal"]{
           <span class="settings-group-chevron" id="sgchev-data">▾</span>
         </div>
         <div class="settings-group-body" id="sgbody-data">
+          <!-- Storage Info -->
+          <div style="background:var(--surface2);border-radius:var(--r);padding:12px;margin-bottom:16px">
+            <div style="font-size:13px;font-weight:500;margin-bottom:6px;color:var(--text1)">💾 Where is my data stored?</div>
+            <div style="font-size:12px;line-height:1.5;color:var(--text3)">
+              Your activities, settings, and progress are saved in your browser's local storage on this device. This means:
+              <ul style="margin:8px 0 0 16px;padding:0">
+                <li style="margin-bottom:4px">Data stays on <strong>this device only</strong> (not in the cloud)</li>
+                <li style="margin-bottom:4px">Won't sync to other devices or browsers</li>
+                <li style="margin-bottom:4px">Can be lost if you clear browser data or reinstall</li>
+              </ul>
+              <strong style="color:var(--accent)">→ Export regularly to back up your routine!</strong>
+            </div>
+          </div>
+          
           <div class="settings-row" style="margin-bottom:8px">
             <div>
               <div class="settings-row-label">Export data</div>
@@ -2071,9 +2091,22 @@ body[data-theme="journal"]{
             <button class="btn sm primary" onclick="exportData()">📥 Export</button>
           </div>
           <div class="settings-row" style="margin-bottom:8px">
-            <div>
+            <div style="flex:1">
               <div class="settings-row-label">Export for AI planning</div>
-              <div class="settings-row-sub">Get help from Claude to design your routine</div>
+              <div class="settings-row-sub">
+                Get help from Claude AI to design your routine
+                <details style="margin-top:8px">
+                  <summary style="cursor:pointer;font-size:11px;color:var(--accent);user-select:none">Show workflow →</summary>
+                  <ol style="margin:8px 0 0 16px;padding:0;font-size:11px;line-height:1.5;color:var(--text3)">
+                    <li>Click "Export" below to download a .txt file</li>
+                    <li>Go to <a href="https://claude.ai" target="_blank" style="color:var(--accent)">claude.ai</a> and start a new chat</li>
+                    <li>Upload the .txt file to the chat</li>
+                    <li>Discuss your goals and ideal routine with Claude</li>
+                    <li>Claude will generate a .json file for you to download</li>
+                    <li>Import that .json file using "Import data" below</li>
+                  </ol>
+                </details>
+              </div>
             </div>
             <button class="btn sm" onclick="exportForAI()">🤖 Export</button>
           </div>
@@ -7429,7 +7462,7 @@ ${aiExport.instructions}`;
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
   
-  showToast('🤖 AI planning file exported!');
+  showToast('✅ File exported! Next: Upload to claude.ai to get AI help designing your routine.');
 }
 
 function handleImportFile(event) {
