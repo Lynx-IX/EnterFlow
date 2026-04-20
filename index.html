@@ -1268,7 +1268,7 @@ body[data-theme="journal"]{
 <div id="ob-welcome" class="ob-screen">
   <div class="ob-logo"><div class="ob-logo-icon">◈</div><span class="ob-logo-text">EnterFlow</span></div>
   <h1 class="ob-display">Your day,<br><em>visualized and celebrated.</em></h1>
-  <p class="ob-sub">EnterFlow turns your routine into a timeline you actually want to follow. Track what you do, complete blocks, and watch your day take shape—no rigid schedules, just structure that adapts to you.</p>
+  <p class="ob-sub">EnterFlow turns your routine into a timeline you actually want to follow. Track activities, complete time blocks, and watch your day take shape—no rigid schedules, just structure that adapts to you.</p>
   
   <!-- Simple visual preview -->
   <div style="margin:32px 0;padding:20px;background:var(--surface);border-radius:16px;border:1px solid var(--border)">
@@ -1279,7 +1279,7 @@ body[data-theme="journal"]{
       </div>
       <span style="font-size:22px">🎉</span>
     </div>
-    <p style="font-size:12px;color:var(--text3);text-align:center">Complete blocks → See progress → Celebrate wins</p>
+    <p style="font-size:12px;color:var(--text3);text-align:center">Complete activities → See progress → Celebrate wins</p>
   </div>
 
   <button class="btn primary" onclick="obGo('ob-how')" style="min-width:180px">Get Started</button>
@@ -1287,14 +1287,14 @@ body[data-theme="journal"]{
 
 <!-- ONBOARDING SCREEN 2: HOW IT WORKS -->
 <div id="ob-how" class="ob-screen">
-  <h2 style="font-family:var(--fd);font-size:1.8rem;margin-bottom:10px">Build your day from blocks</h2>
-  <p class="ob-sub" style="margin-bottom:32px">Here's how EnterFlow works:</p>
+  <h2 style="font-family:var(--fd);font-size:1.8rem;margin-bottom:10px">How EnterFlow works</h2>
+  <p class="ob-sub" style="margin-bottom:32px">Your day is organized into time blocks filled with activities:</p>
   
   <div style="text-align:left;max-width:400px;margin:0 auto 32px">
     <div style="display:flex;gap:16px;margin-bottom:20px">
       <div style="font-size:32px;flex-shrink:0">📅</div>
       <div>
-        <div style="font-weight:500;margin-bottom:4px;color:var(--text1)">Sections divide your day</div>
+        <div style="font-weight:500;margin-bottom:4px;color:var(--text1)">Time blocks divide your day</div>
         <div style="font-size:13px;color:var(--text3)">Morning, Afternoon, Evening, Night—customize the times to match your rhythm</div>
       </div>
     </div>
@@ -1302,16 +1302,16 @@ body[data-theme="journal"]{
     <div style="display:flex;gap:16px;margin-bottom:20px">
       <div style="font-size:32px;flex-shrink:0">◈</div>
       <div>
-        <div style="font-weight:500;margin-bottom:4px;color:var(--text1)">Blocks are your activities</div>
-        <div style="font-size:13px;color:var(--text3)">Add start times or leave flexible—whatever works for you</div>
+        <div style="font-weight:500;margin-bottom:4px;color:var(--text1)">Activities fill your time blocks</div>
+        <div style="font-size:13px;color:var(--text3)">Add start times, set timers, group into routines—whatever works for you</div>
       </div>
     </div>
     
     <div style="display:flex;gap:16px">
       <div style="font-size:32px;flex-shrink:0">🎉</div>
       <div>
-        <div style="font-weight:500;margin-bottom:4px;color:var(--text1)">Complete blocks, see progress</div>
-        <div style="font-size:13px;color:var(--text3)">Fireworks celebrate each section you finish</div>
+        <div style="font-weight:500;margin-bottom:4px;color:var(--text1)">Complete activities, see progress</div>
+        <div style="font-size:13px;color:var(--text3)">Fireworks celebrate each time block you finish</div>
       </div>
     </div>
   </div>
@@ -1370,17 +1370,24 @@ body[data-theme="journal"]{
 
 <!-- ONBOARDING SCREEN 4: QUICK START -->
 <div id="ob-quick-start" class="ob-screen">
-  <h2 style="font-family:var(--fd);font-size:1.8rem;margin-bottom:10px">Add your first blocks</h2>
-  <p class="ob-sub" style="margin-bottom:28px">Tap to add common activities, or skip and build from scratch.</p>
+  <h2 style="font-family:var(--fd);font-size:1.8rem;margin-bottom:10px">Build your first day</h2>
+  <p class="ob-sub" style="margin-bottom:28px">Create your own activities or choose from common ones below.</p>
   
-  <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:24px;max-width:500px;margin-left:auto;margin-right:auto">
-    <button class="btn" onclick="obQuickAdd('🌅 Wake up routine', 'morning')" style="flex:1 1 auto;min-width:140px">🌅 Wake up routine</button>
-    <button class="btn" onclick="obQuickAdd('☕ Breakfast', 'morning')" style="flex:1 1 auto;min-width:140px">☕ Breakfast</button>
-    <button class="btn" onclick="obQuickAdd('💪 Exercise', 'morning')" style="flex:1 1 auto;min-width:140px">💪 Exercise</button>
-    <button class="btn" onclick="obQuickAdd('💼 Work focus', 'afternoon')" style="flex:1 1 auto;min-width:140px">💼 Work focus</button>
-    <button class="btn" onclick="obQuickAdd('🍽️ Dinner', 'evening')" style="flex:1 1 auto;min-width:140px">🍽️ Dinner</button>
-    <button class="btn" onclick="obQuickAdd('📚 Reading', 'evening')" style="flex:1 1 auto;min-width:140px">📚 Reading</button>
-    <button class="btn" onclick="obQuickAdd('😴 Wind down', 'night')" style="flex:1 1 auto;min-width:140px">😴 Wind down</button>
+  <!-- PRIMARY ACTION: Create custom activity -->
+  <button class="btn primary" onclick="openEditor(null, 'morning')" style="width:100%;max-width:400px;padding:16px;font-size:16px;margin-bottom:24px">+ Create Activity</button>
+  
+  <div style="text-align:center;margin-bottom:16px">
+    <p style="font-size:13px;color:var(--text3)">or choose a suggestion</p>
+  </div>
+  
+  <!-- SECONDARY: Quick-add suggestions -->
+  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:24px;max-width:500px;margin-left:auto;margin-right:auto">
+    <button class="btn sm" onclick="obQuickAdd('☕ Breakfast', 'morning')" style="flex:0 0 auto">☕ Breakfast</button>
+    <button class="btn sm" onclick="obQuickAdd('💪 Exercise', 'morning')" style="flex:0 0 auto">💪 Exercise</button>
+    <button class="btn sm" onclick="obQuickAdd('💼 Work focus', 'afternoon')" style="flex:0 0 auto">💼 Work focus</button>
+    <button class="btn sm" onclick="obQuickAdd('🍽️ Dinner', 'evening')" style="flex:0 0 auto">🍽️ Dinner</button>
+    <button class="btn sm" onclick="obQuickAdd('📚 Reading', 'evening')" style="flex:0 0 auto">📚 Reading</button>
+    <button class="btn sm" onclick="obQuickAdd('😴 Wind down', 'night')" style="flex:0 0 auto">😴 Wind down</button>
   </div>
 
   <div class="ob-btns">
@@ -1388,7 +1395,7 @@ body[data-theme="journal"]{
     <button class="btn primary" onclick="obFinish()">Start using EnterFlow →</button>
   </div>
   
-  <button class="btn sm" onclick="obFinish()" style="margin-top:16px;font-size:12px;color:var(--text3)">Skip - I'll build from scratch</button>
+  <button class="btn sm" onclick="obFinish()" style="margin-top:16px;font-size:12px;color:var(--text3)">Skip - I'll add activities later</button>
 </div>
 
 <div id="ob-name" class="ob-screen" style="display:none">
@@ -1564,7 +1571,7 @@ body[data-theme="journal"]{
   <div id="screen-routine" class="screen">
     <div class="app-header">
       <div class="top-bar">
-        <div class="app-title">Manage Blocks</div>
+        <div class="app-title">All Activities</div>
       </div>
     </div>
     <div class="divider" style="margin:4px 1rem 0"></div>
@@ -2138,7 +2145,7 @@ body[data-theme="journal"]{
   <div class="nav-inner">
     <button class="nav-btn active" id="nav-dash" onclick="navTo('dash')">◈ Daily</button>
     <button class="nav-btn" id="nav-calendar" onclick="navTo('dash');setView('calendar')">📅 Cal</button>
-    <button class="nav-btn" id="nav-routine" onclick="navTo('routine')">☰ Manage</button>
+    <button class="nav-btn" id="nav-routine" onclick="navTo('routine')">☰ All Activities</button>
     <button class="nav-btn" id="nav-settings" onclick="navTo('settings')">⚙ Settings</button>
     <button class="nav-btn" id="nav-help" onclick="navTo('help')">❓</button>
   </div>
@@ -2149,7 +2156,7 @@ body[data-theme="journal"]{
   <div id="modal-sheet">
     <div class="modal-handle"></div>
     <div class="modal-title-row">
-      <h2 style="font-family:var(--fd);font-size:1.4rem" id="modal-title">Add Block</h2>
+      <h2 style="font-family:var(--fd);font-size:1.4rem" id="modal-title">Add Activity</h2>
       <button class="btn icon" onclick="closeEditor()">✕</button>
     </div>
     <div class="col">
@@ -4353,13 +4360,13 @@ function _showDailyAddMenu(ev) {
   const blockBtn = document.createElement('button');
   blockBtn.className = 'btn sm';
   blockBtn.style.cssText = 'width:100%;text-align:left;padding:10px 14px;border-radius:0;border-bottom:1px solid var(--border)';
-  blockBtn.textContent = '📋 Add Block';
+  blockBtn.textContent = '◈ Add Activity';
   blockBtn.onclick = () => { menu.remove(); openEditor(null); };
   
   const subBtn = document.createElement('button');
   subBtn.className = 'btn sm';
   subBtn.style.cssText = 'width:100%;text-align:left;padding:10px 14px;border-radius:0';
-  subBtn.textContent = '📁 Add Subsection';
+  subBtn.textContent = '📁 Add Group';
   subBtn.onclick = () => {
     menu.remove();
     // Find first visible section to add subsection to
@@ -4393,13 +4400,13 @@ function _showManageAddMenu(ev) {
   const blockBtn = document.createElement('button');
   blockBtn.className = 'btn sm';
   blockBtn.style.cssText = 'width:100%;text-align:left;padding:10px 14px;border-radius:0;border-bottom:1px solid var(--border)';
-  blockBtn.textContent = '📋 Add Block';
+  blockBtn.textContent = '◈ Add Activity';
   blockBtn.onclick = () => { menu.remove(); openEditor(null, routineFilter || 'morning'); };
   
   const subBtn = document.createElement('button');
   subBtn.className = 'btn sm';
   subBtn.style.cssText = 'width:100%;text-align:left;padding:10px 14px;border-radius:0';
-  subBtn.textContent = '📁 Add Subsection';
+  subBtn.textContent = '📁 Add Group';
   subBtn.onclick = () => {
     menu.remove();
     // Find first visible section to add subsection to
@@ -4692,7 +4699,7 @@ function renderListView(due){
     el.appendChild(secDiv);
   });
 
-  if(!any) el.innerHTML=`<div class="empty-state"><div class="empty-icon">🎉</div><p>Nothing scheduled today! Add blocks in Manage Blocks.</p></div>`;
+  if(!any) el.innerHTML=`<div class="empty-state"><div class="empty-icon">🎉</div><p>Nothing scheduled today! Add activities in All Activities.</p></div>`;
 }
 
 function renderTimelineView(due){
@@ -5678,7 +5685,7 @@ function renderRoutine(){
   );
 
   if (activeBlocks.length === 0) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">◈</div><p>No blocks yet. Tap + Add block to create one.</p></div>`;
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">◈</div><p>No activities yet. Tap + Add to create one.</p></div>`;
   } else {
     secs.forEach(sec => {
       if (routineFilter && routineFilter !== sec.id) { return; }
