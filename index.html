@@ -1060,6 +1060,25 @@ body[data-theme="journal"]{
 .notif-status.denied {background:rgba(244,63,94,.12); color:var(--danger);border-color:rgba(244,63,94,.3)}
 .notif-status.default{background:var(--surface2);     color:var(--text3); border-color:var(--border)}
 
+/* Persistent Alarm Overlay */
+#alarm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg);
+  z-index: 10000;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+#alarm-overlay.active {
+  display: flex;
+}
+
 /* ── INACTIVE BLOCKS ── */
 .inactive-section-header{
   display:flex;align-items:center;justify-content:space-between;
@@ -1374,7 +1393,19 @@ body[data-theme="journal"]{
   <p class="ob-sub" style="margin-bottom:28px">Create your own activities or choose from common ones below.</p>
   
   <!-- PRIMARY ACTION: Create custom activity -->
-  <button class="btn primary" onclick="openEditor(null, 'morning')" style="width:100%;max-width:400px;padding:16px;font-size:16px;margin-bottom:24px">+ Create Activity</button>
+  <button class="btn primary" onclick="openEditor(null, 'morning')" style="width:100%;max-width:400px;padding:16px;font-size:16px;margin-bottom:16px">+ Create Activity</button>
+  
+  <!-- AI PLANNING OPTION -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+      <span style="font-size:24px">🤖</span>
+      <div>
+        <div style="font-weight:500;font-size:14px">Let AI help you plan</div>
+        <div style="font-size:12px;color:var(--text3)">Export a file and chat with Claude to design your routine</div>
+      </div>
+    </div>
+    <button class="btn sm" onclick="exportForAI()" style="width:100%;margin-top:8px">Export for AI Planning</button>
+  </div>
   
   <div style="text-align:center;margin-bottom:16px">
     <p style="font-size:13px;color:var(--text3)">or choose a suggestion</p>
@@ -1604,9 +1635,10 @@ body[data-theme="journal"]{
         <div class="settings-group-body" id="sgbody-help-start">
           <button class="btn" onclick="replayTutorial()" style="width:100%;margin-bottom:8px">▶ Replay Tutorial</button>
           <div style="padding:12px;background:var(--surface2);border-radius:var(--r);font-size:13px;line-height:1.6;color:var(--text2)">
-            <p style="margin-bottom:8px"><strong>Daily View:</strong> Your home base. See what's due today and mark things done.</p>
-            <p style="margin-bottom:8px"><strong>Manage Blocks:</strong> View all your activities regardless of when they're due.</p>
-            <p><strong>Calendar:</strong> See upcoming events and add one-time activities.</p>
+            <p style="margin-bottom:8px"><strong>◈ Daily:</strong> Your home base. See what's due today, start timers, and mark activities done.</p>
+            <p style="margin-bottom:8px"><strong>☰ All Activities:</strong> View and manage all your activities regardless of when they're due.</p>
+            <p style="margin-bottom:8px"><strong>📅 Calendar:</strong> See upcoming events and add one-time activities.</p>
+            <p><strong>⚙ Settings:</strong> Customize themes, time blocks, sounds, and more.</p>
           </div>
         </div>
       </div>
@@ -1619,12 +1651,13 @@ body[data-theme="journal"]{
         </div>
         <div class="settings-group-body" id="sgbody-help-concepts">
           <div style="padding:12px;background:var(--surface2);border-radius:var(--r);font-size:13px;line-height:1.6;color:var(--text2)">
-            <p style="margin-bottom:12px"><strong>📋 Blocks:</strong> Activities you want to do regularly. Each block has a name, frequency, optional timer, and more.</p>
-            <p style="margin-bottom:12px"><strong>🏷 Sections:</strong> Organize your day into Morning, Afternoon, Evening, and Night. Reorder blocks and move them between sections.</p>
-            <p style="margin-bottom:12px"><strong>🔄 Frequencies:</strong> Daily (every day), Weekly (specific days), Biweekly (every 2 weeks), Monthly (specific date), or One-off (calendar events).</p>
-            <p style="margin-bottom:12px"><strong>⏱ Timers:</strong> Countdown (fixed duration), Stopwatch (track time spent), or None. Countdown timers show time remaining; stopwatch tracks cumulative time.</p>
-            <p style="margin-bottom:12px"><strong>⭕ Optional Blocks:</strong> Activities that don't affect your streak if skipped. Good for "nice to have" tasks.</p>
-            <p><strong>↩ Rollover:</strong> Incomplete blocks can roll over to the next day (enable in block editor). Great for flexible tasks.</p>
+            <p style="margin-bottom:12px"><strong>🕐 Time Blocks:</strong> Your day is divided into Morning, Afternoon, Evening, and Night. Each time block starts at a specific time (customizable in Settings).</p>
+            <p style="margin-bottom:12px"><strong>◈ Activities:</strong> Things you want to do regularly. Each activity has a name, belongs to a time block, and can have optional timers, start times, and more.</p>
+            <p style="margin-bottom:12px"><strong>📁 Groups:</strong> Organize related activities together (like "Morning Routine" or "Work Session"). Create from the 📁 button in Daily or All Activities.</p>
+            <p style="margin-bottom:12px"><strong>🔄 Frequencies:</strong> Daily (every day), Specific days (choose which days), Interval (every X days), Cycle (X on / X off), or Once (calendar events).</p>
+            <p style="margin-bottom:12px"><strong>⏱ Timers:</strong> None (no timer), Countdown (fixed duration like "30 min work session"), or Stopwatch (track time spent across days).</p>
+            <p style="margin-bottom:12px"><strong>⭕ Optional Activities:</strong> Don't affect your streak if skipped. Good for "nice to have" tasks.</p>
+            <p><strong>↩ Rollover:</strong> Incomplete activities can roll over to the next day. Enable in the activity editor for flexible tasks.</p>
           </div>
         </div>
       </div>
@@ -1637,11 +1670,13 @@ body[data-theme="journal"]{
         </div>
         <div class="settings-group-body" id="sgbody-help-features">
           <div style="padding:12px;background:var(--surface2);border-radius:var(--r);font-size:13px;line-height:1.6;color:var(--text2)">
-            <p style="margin-bottom:12px"><strong>📁 Subsections:</strong> Create nested groups within sections for better organization. Add from the + button on section headers in Daily view.</p>
-            <p style="margin-bottom:12px"><strong>📅 Calendar Events:</strong> One-time activities pinned to specific dates. Add from Calendar tab or set frequency to "Once" in the editor.</p>
-            <p style="margin-bottom:12px"><strong>⊘ Inactive Blocks:</strong> Temporarily hide blocks without deleting them. Find them at the bottom of Manage Blocks.</p>
-            <p style="margin-bottom:12px"><strong>🔥 Streaks:</strong> Complete all required (non-optional) blocks to maintain your daily streak. View stats at the top of Daily.</p>
-            <p><strong>🌙 Start Times:</strong> Optionally set when a block should happen. Shows time badges and enables notifications (if enabled in Settings).</p>
+            <p style="margin-bottom:12px"><strong>🎯 Views:</strong> Switch between List (all activities), Timeline (only scheduled activities), and Calendar views. Swipe left/right on mobile to navigate between views.</p>
+            <p style="margin-bottom:12px"><strong>🔔 Alarms:</strong> Set start times for activities to get notifications. Regular alarms play once; Persistent alarms loop until dismissed (perfect for wake-up calls!).</p>
+            <p style="margin-bottom:12px"><strong>📅 Calendar Events:</strong> One-time activities pinned to specific dates. Set frequency to "Once" and pick a date in the activity editor.</p>
+            <p style="margin-bottom:12px"><strong>⊘ Inactive Activities:</strong> Temporarily hide activities without deleting them. Toggle via gear menu. Find inactive activities at the bottom of All Activities.</p>
+            <p style="margin-bottom:12px"><strong>🔥 Streaks:</strong> Complete all required (non-optional) activities to maintain your daily streak. View stats at the top of Daily view.</p>
+            <p style="margin-bottom:12px"><strong>🤖 AI Planning:</strong> Export your routine and chat with Claude to get help designing your day. Import the result back in. Find it in Settings → Data Management or during onboarding.</p>
+            <p><strong>🕐 24-Hour Time:</strong> Toggle between 12-hour (2:30pm) and 24-hour (14:30) time display in Settings → Time Block Times.</p>
           </div>
         </div>
       </div>
@@ -1654,13 +1689,16 @@ body[data-theme="journal"]{
         </div>
         <div class="settings-group-body" id="sgbody-help-tips">
           <div style="padding:12px;background:var(--surface2);border-radius:var(--r);font-size:13px;line-height:1.6;color:var(--text2)">
-            <p style="margin-bottom:12px"><strong>📊 Info Strip:</strong> The auto-scrolling ticker at the top shows weather, sky info, and astrology. Hover over it to pause and manually scroll through modules. Enable/disable items in Settings → Info Strip.</p>
-            <p style="margin-bottom:12px"><strong>⚙ Gear Menus:</strong> Tap the ⚙ icon on any block to access quick actions: reorder with ↑↓ arrows, edit details, or delete. The menu stays open after moving blocks.</p>
-            <p style="margin-bottom:12px"><strong>🎨 Themes:</strong> Try all 9 themes! Autumn & Sunset are warm and cozy, Cosmic & Electric are vibrant, Minimal & Mono are clean, Earthy & Jungle are natural, Journal is classic. Each has light/dark modes.</p>
-            <p style="margin-bottom:12px"><strong>📂 Subsections:</strong> Group related blocks together (e.g., "Morning Routine" → Shower, Coffee, Vitamins). Reorder subsections and blocks independently. Collapse subsections to declutter.</p>
-            <p style="margin-bottom:12px"><strong>📅 Calendar Workflow:</strong> Use Calendar view for one-time events and future planning. Blocks appear in Daily view on their scheduled date. Reorder calendar items within each day.</p>
-            <p style="margin-bottom:12px"><strong>🔄 Rollover Strategy:</strong> Enable rollover for flexible tasks that can carry over (e.g., "Read for 30 min"). They'll show with a ↩ badge the next day if incomplete.</p>
-            <p><strong>⏱ Timer Tips:</strong> Countdown timers are great for focused work sessions. Stopwatch mode tracks cumulative time across days (perfect for projects). Toggle "Track total" to see lifetime hours.</p>
+            <p style="margin-bottom:12px"><strong>📊 Info Strip:</strong> The auto-scrolling ticker at the top shows weather, sky info, and astrology. Hover to pause and manually scroll. Customize modules in Settings → Info Strip.</p>
+            <p style="margin-bottom:12px"><strong>⚙ Gear Menus:</strong> Tap the gear icon on any activity to reorder with ↑↓ arrows, edit details, or delete. The menu stays open after moving activities.</p>
+            <p style="margin-bottom:12px"><strong>↕ Reordering:</strong> Use ↑↓ arrows in gear menus to reorder activities within their time block. Activities can also "escape" groups by moving past the boundary.</p>
+            <p style="margin-bottom:12px"><strong>📱 Swipe Navigation:</strong> On mobile, swipe left/right to navigate between tabs (Daily ↔ All Activities ↔ Settings ↔ Help) or between views within Daily (List ↔ Timeline ↔ Calendar).</p>
+            <p style="margin-bottom:12px"><strong>🎨 Themes:</strong> Try all 7 themes! Cosmic (deep purple space), Earthy (warm browns), Minimal (clean grays), Electric (vibrant blue), Mono (black & white), Jungle (lush greens), Journal (classic paper). Each has light and dark modes.</p>
+            <p style="margin-bottom:12px"><strong>📁 Groups:</strong> Group related activities (e.g., "Morning Routine" → Shower, Coffee, Meditation). Collapse groups to declutter. Reorder groups and activities independently.</p>
+            <p style="margin-bottom:12px"><strong>🔄 Rollover Strategy:</strong> Enable rollover for flexible tasks that can carry over (like "Read for 30 min"). They'll show with a ↩ badge if incomplete and move to the next day at midnight.</p>
+            <p style="margin-bottom:12px"><strong>⏱ Timer Tips:</strong> Countdown timers are great for focused work blocks. Stopwatch mode tracks cumulative time across days (perfect for tracking project hours). Enable "Track total" to see lifetime hours.</p>
+            <p style="margin-bottom:12px"><strong>🕐 Time Block Customization:</strong> Change when Morning/Afternoon/Evening/Night start in Settings → Time Block Times. Activities are automatically assigned to time blocks based on their start times.</p>
+            <p><strong>🤖 AI Workflow:</strong> Export your routine, paste it in a chat with Claude, discuss your goals, then import the improved JSON file back. Claude understands your time blocks and will assign activities correctly.</p>
           </div>
         </div>
       </div>
@@ -1754,24 +1792,39 @@ body[data-theme="journal"]{
       <!-- ── Sections (collapsible) ── -->
       <div class="settings-group">
         <div class="settings-group-header" onclick="toggleSettingsGroup('sections')">
-          <span class="settings-group-title">🕐 Section Times</span>
+          <span class="settings-group-title">🕐 Time Block Times</span>
           <span class="settings-group-chevron" id="sgchev-sections">▾</span>
         </div>
         <div class="settings-group-body" id="sgbody-sections">
-          <div style="font-size:12px;color:var(--text3);padding:0 0 10px">Set when each section of your day begins.</div>
+          <div style="font-size:12px;color:var(--text3);padding:0 0 10px">Set when each time block of your day begins.</div>
           <div class="settings-row">
-            <div><div class="settings-row-label">Morning ends at</div></div>
+            <div><div class="settings-row-label">Morning starts at</div></div>
             <input type="time" id="sbound-morning" class="sbound-input" onchange="saveSectionBounds()">
           </div>
           <div class="settings-row">
-            <div><div class="settings-row-label">Afternoon ends at</div></div>
+            <div><div class="settings-row-label">Afternoon starts at</div></div>
             <input type="time" id="sbound-afternoon" class="sbound-input" onchange="saveSectionBounds()">
           </div>
           <div class="settings-row">
-            <div><div class="settings-row-label">Evening ends at</div></div>
+            <div><div class="settings-row-label">Evening starts at</div></div>
             <input type="time" id="sbound-evening" class="sbound-input" onchange="saveSectionBounds()">
           </div>
-          <div style="font-size:11px;color:var(--text3);padding:6px 0 0">Night runs from Evening's end until Morning.</div>
+          <div class="settings-row">
+            <div><div class="settings-row-label">Night starts at</div></div>
+            <input type="time" id="sbound-night" class="sbound-input" onchange="saveSectionBounds()">
+          </div>
+          <div style="font-size:11px;color:var(--text3);padding:6px 0 0">Each time block runs until the next one starts.</div>
+          
+          <!-- Time format toggle -->
+          <div class="toggle-row" style="margin-top:16px">
+            <div>
+              <div style="font-size:14px;font-weight:500">Use 24-hour time</div>
+              <div style="font-size:11px;color:var(--text3)">Display times as 14:30 instead of 2:30pm</div>
+            </div>
+            <div class="toggle" id="24hour-toggle" onclick="toggle24Hour(this)">
+              <div class="toggle-thumb"></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -2019,6 +2072,13 @@ body[data-theme="journal"]{
           </div>
           <div class="settings-row" style="margin-bottom:8px">
             <div>
+              <div class="settings-row-label">Export for AI planning</div>
+              <div class="settings-row-sub">Get help from Claude to design your routine</div>
+            </div>
+            <button class="btn sm" onclick="exportForAI()">🤖 Export</button>
+          </div>
+          <div class="settings-row" style="margin-bottom:8px">
+            <div>
               <div class="settings-row-label">Import data</div>
               <div class="settings-row-sub">Restore from backup file</div>
             </div>
@@ -2207,9 +2267,19 @@ body[data-theme="journal"]{
       <div class="toggle-row" id="alarm-row" style="display:none">
         <div>
           <div style="font-size:14px;font-weight:500">🔔 Alarm at start time</div>
-          <div style="font-size:11px;color:var(--text3)">Sound + notification when this block is due</div>
+          <div style="font-size:11px;color:var(--text3)">Sound + notification when this activity is due</div>
         </div>
-        <div class="toggle on" id="e-alarm-toggle" onclick="this.classList.toggle('on')">
+        <div class="toggle on" id="e-alarm-toggle" onclick="this.classList.toggle('on');_syncPersistentAlarmRow()">
+          <div class="toggle-thumb"></div>
+        </div>
+      </div>
+      <!-- Persistent alarm row — only visible when alarm is enabled -->
+      <div class="toggle-row" id="persistent-alarm-row" style="display:none">
+        <div>
+          <div style="font-size:14px;font-weight:500">🚨 Persistent alarm</div>
+          <div style="font-size:11px;color:var(--text3)">Keeps ringing until dismissed or snoozed</div>
+        </div>
+        <div class="toggle" id="e-persistent-toggle" onclick="this.classList.toggle('on')">
           <div class="toggle-thumb"></div>
         </div>
       </div>
@@ -2305,9 +2375,14 @@ function _resolveSection(block, boundaries) {
   if (!block.startTime) return block.sectionId || block.section || 'morning';
   const bnd = boundaries || appState.sectionBoundaries;
   const t = block.startTime;
-  if (t < bnd.morningEnd)   return 'morning';
-  if (t < bnd.afternoonEnd) return 'afternoon';
-  if (t < bnd.eveningEnd)   return 'evening';
+  
+  // Compare against start times of each section
+  if (t >= bnd.nightStart) return 'night';      // After night starts
+  if (t >= bnd.eveningStart) return 'evening';  // After evening starts
+  if (t >= bnd.afternoonStart) return 'afternoon'; // After afternoon starts
+  if (t >= bnd.morningStart) return 'morning';  // After morning starts
+  
+  // Before morning starts (late night / early morning) → night
   return 'night';
 }
 
@@ -2362,9 +2437,9 @@ const appState = {
 
   /*
    * Sections are FIXED (morning/afternoon/evening/night) — not stored in state.
-   * sectionBoundaries defines the time cutoffs between them.
+   * sectionBoundaries defines when each time block STARTS.
    */
-  sectionBoundaries: { morningEnd: '12:00', afternoonEnd: '18:00', eveningEnd: '21:00' },
+  sectionBoundaries: { morningStart: '06:00', afternoonStart: '12:00', eveningStart: '18:00', nightStart: '21:00' },
 
   /*
    * Subsections — user-created groups that live inside a parent section.
@@ -2378,6 +2453,7 @@ const appState = {
   soundEnabled:         true,
   notificationsEnabled: false,
   autoAdvance:          true,
+  use24HourTime:        false, // Default to 12-hour time (7:30am format)
 
   weatherCache: null,
 
@@ -2861,9 +2937,28 @@ function _ensureTemplate() {
   if (!appState.days[TEMPLATE_KEY]) {
     appState.days[TEMPLATE_KEY] = { blocks: [], completed: {} };
   }
-  if (!appState.sectionBoundaries) {
-    appState.sectionBoundaries = { morningEnd: '12:00', afternoonEnd: '18:00', eveningEnd: '21:00' };
+  
+  // Migrate old "end" format to new "start" format
+  if (appState.sectionBoundaries) {
+    const old = appState.sectionBoundaries;
+    // Check if using old format (has morningEnd instead of morningStart)
+    if (old.morningEnd && !old.morningStart) {
+      // Convert: old end times become new start times (shifted forward)
+      // Old: Morning ends 12:00, Afternoon ends 18:00, Evening ends 21:00
+      // New: Morning starts 06:00 (default), Afternoon starts 12:00, Evening starts 18:00, Night starts 21:00
+      appState.sectionBoundaries = {
+        morningStart: '06:00',  // Default morning start
+        afternoonStart: old.morningEnd || '12:00',
+        eveningStart: old.afternoonEnd || '18:00',
+        nightStart: old.eveningEnd || '21:00'
+      };
+    }
   }
+  
+  if (!appState.sectionBoundaries) {
+    appState.sectionBoundaries = { morningStart: '06:00', afternoonStart: '12:00', eveningStart: '18:00', nightStart: '21:00' };
+  }
+
   if (!appState.subsections) appState.subsections = [];
 }
 
@@ -2950,16 +3045,18 @@ function load() {
     //   • Strip customSections and per-day sections arrays.
     //   • Seed subsections + sectionBoundaries if missing.
     const VALID_SECS = new Set(['morning','afternoon','evening','night']);
-    const boundaries = parsed.sectionBoundaries || { morningEnd:'12:00', afternoonEnd:'18:00', eveningEnd:'21:00' };
+    const boundaries = parsed.sectionBoundaries || { morningStart:'06:00', afternoonStart:'12:00', eveningStart:'18:00', nightStart:'21:00' };
 
     function _migrateBlockSection(b) {
       if (VALID_SECS.has(b.section)) return; // already fine
       // Old custom section — reassign by startTime or default morning
       if (b.startTime) {
-        if (b.startTime < boundaries.morningEnd)   { b.section = 'morning';   return; }
-        if (b.startTime < boundaries.afternoonEnd) { b.section = 'afternoon'; return; }
-        if (b.startTime < (boundaries.eveningEnd || '21:00')) { b.section = 'evening'; return; }
-        b.section = 'night';
+        // Use same logic as _resolveSection
+        if (b.startTime >= boundaries.nightStart) { b.section = 'night'; return; }
+        if (b.startTime >= boundaries.eveningStart) { b.section = 'evening'; return; }
+        if (b.startTime >= boundaries.afternoonStart) { b.section = 'afternoon'; return; }
+        if (b.startTime >= boundaries.morningStart) { b.section = 'morning'; return; }
+        b.section = 'night'; // Before morning starts = late night
       } else {
         b.section = 'morning';
       }
@@ -3003,8 +3100,7 @@ function load() {
     delete parsed.customSections;
 
     if (!parsed.subsections)        parsed.subsections = [];
-    if (!parsed.sectionBoundaries)  parsed.sectionBoundaries = { morningEnd:'12:00', afternoonEnd:'18:00', eveningEnd:'21:00' };
-    if (parsed.sectionBoundaries && !parsed.sectionBoundaries.eveningEnd) parsed.sectionBoundaries.eveningEnd = '21:00';
+    if (!parsed.sectionBoundaries)  parsed.sectionBoundaries = { morningStart:'06:00', afternoonStart:'12:00', eveningStart:'18:00', nightStart:'21:00' };
 
     Object.assign(appState, parsed);
 
@@ -3311,6 +3407,15 @@ function toggleFontDropdown() {
 // getSections() is defined earlier (after _ensureTemplate).
 // These stubs exist for backward-compat with any call site that used the old signatures.
 function fmt12(t){if(!t)return'';const[h,m]=t.split(':').map(Number);const ap=h>=12?'pm':'am';return`${h%12||12}:${String(m).padStart(2,'0')}${ap}`}
+
+// Format time based on user preference (12-hour or 24-hour)
+function fmtTime(t) {
+  if (!t) return '';
+  if (appState.use24HourTime) {
+    return t; // Already in HH:MM format
+  }
+  return fmt12(t); // Convert to 12-hour
+}
 function freqLabel(b){
   const f = b.freq || 'daily';
   if (f === 'once')     return b.pinnedDate ? `📅 ${b.pinnedDate}` : '📅 Single date';
@@ -3657,7 +3762,7 @@ function renderBlockList(containerId, filterSec, draggable, blocksArr) {
   sortedBlocks(blocks).forEach(b=>{
     const div=document.createElement('div');div.className='block-row s-'+secSlug(b.section);div.dataset.id=b.id;
     const alarmIcon = b.startTime ? (b.alarm === false ? ' <span title="Alarm off" style="opacity:.4;font-size:11px">🔕</span>' : ' <span title="Alarm on" style="font-size:11px">🔔</span>') : '';
-    div.innerHTML=`<div class="block-main"><div class="drag-handle">⠿</div><div class="block-dot"></div><div class="block-info"><div class="block-name">${b.name}${b.optional?` <span class="opt-label">(optional)</span>`:''}</div><div class="block-meta">${b.startTime?`<span class="time-badge">${fmt12(b.startTime)}</span>${alarmIcon}`:''}<span>${b.dur} min · ${freqLabel(b)}</span></div></div><div class="block-right"><button class="btn sm icon" onclick="event.stopPropagation();openEditor('${b.id}')">✏️</button></div></div>`;
+    div.innerHTML=`<div class="block-main"><div class="drag-handle">⠿</div><div class="block-dot"></div><div class="block-info"><div class="block-name">${b.name}${b.optional?` <span class="opt-label">(optional)</span>`:''}</div><div class="block-meta">${b.startTime?`<span class="time-badge">${fmtTime(b.startTime)}</span>${alarmIcon}`:''}<span>${b.dur} min · ${freqLabel(b)}</span></div></div><div class="block-right"><button class="btn sm icon" onclick="event.stopPropagation();openEditor('${b.id}')">✏️</button></div></div>`;
     if(draggable)attachDrag(div);
     el.appendChild(div);
   });
@@ -4149,6 +4254,14 @@ function _syncAlarmRow() {
   const hasTime = !!document.getElementById('e-time')?.value;
   const row = document.getElementById('alarm-row');
   if (row) row.style.display = hasTime ? '' : 'none';
+  _syncPersistentAlarmRow();
+}
+
+function _syncPersistentAlarmRow() {
+  const hasTime = !!document.getElementById('e-time')?.value;
+  const alarmOn = document.getElementById('e-alarm-toggle')?.classList.contains('on');
+  const row = document.getElementById('persistent-alarm-row');
+  if (row) row.style.display = (hasTime && alarmOn) ? '' : 'none';
 }
 
 function _syncSubsectionDropdown() {
@@ -4208,6 +4321,7 @@ function openEditor(id, preSection){
   document.getElementById('e-opt-toggle').classList.toggle('on',!!b?.optional);
   document.getElementById('e-rollover-toggle').classList.toggle('on',!!b?.rollover);
   document.getElementById('e-alarm-toggle').classList.toggle('on', b?.alarm !== false);
+  document.getElementById('e-persistent-toggle').classList.toggle('on', !!b?.persistentAlarm);
 
   // Timer mode
   const mode = b?.timerMode || 'none';
@@ -4290,6 +4404,7 @@ function saveBlock(){
     subsectionId: document.getElementById('e-subsection').value || null,
     startTime,
     alarm: startTime ? document.getElementById('e-alarm-toggle').classList.contains('on') : false,
+    persistentAlarm: startTime ? document.getElementById('e-persistent-toggle').classList.contains('on') : false,
     notes:document.getElementById('e-notes').value.trim(),
     freq: editFreq,
     pinnedDate,
@@ -4400,7 +4515,7 @@ function renderDash(){
       const modeHint = next.timerMode==='countdown'
         ? (next.dur?next.dur+' min':'')
         : next.timerMode==='stopwatch' ? '🕐 Stopwatch' : '';
-      const timeHint = next.startTime?' · at '+fmt12(next.startTime):'';
+      const timeHint = next.startTime?' · at '+fmtTime(next.startTime):'';
       document.getElementById('cb-dur').textContent=(modeHint+timeHint+' · tap to begin').trim();
     }
     else if(due.length){banner.className='current-banner state-done';document.getElementById('cb-tag').textContent='Complete';document.getElementById('cb-name').textContent= isToday ? 'All done for today! 🎉' : 'All done that day! 🎉';document.getElementById('cb-dur').textContent='Great work'}
@@ -4823,7 +4938,7 @@ function renderTimelineView(due){
   const hours=Object.keys(byHour).sort((a,b)=>a-b);
   hours.forEach((h)=>{
     const row=document.createElement('div');row.className='tl-row';
-    const tl=document.createElement('div');tl.className='tl-time';tl.textContent=fmt12(String(h).padStart(2,'0')+':00').replace(':00','');
+    const tl=document.createElement('div');tl.className='tl-time';tl.textContent=fmtTime(String(h).padStart(2,'0')+':00').replace(':00','');
     const sw=document.createElement('div');sw.className='tl-spine-wrap';
     const dot=document.createElement('div');dot.className='tl-spine-dot';
     const line=document.createElement('div');line.className='tl-spine-line';
@@ -4875,7 +4990,7 @@ function buildRow(b, isDone, draggable, context){
       <div class="block-info" onclick="event.stopPropagation();toggleBlockNotes(this)">
         <div class="block-name">${b.name}${b.optional?` <span class="opt-label">(optional)</span>`:''}${isCalItem?` <span class="cal-item-badge">📅</span>`:''}${isRollover&&!isDone?` <span class="rollover-badge">↩ rollover</span>`:''}</div>
         <div class="block-meta">
-          ${b.startTime?`<span class="time-badge">${fmt12(b.startTime)}</span>`:''}
+          ${b.startTime?`<span class="time-badge">${fmtTime(b.startTime)}</span>`:''}
           ${b.timerMode==='countdown'&&b.dur?`<span>${b.dur} min</span>`:''}
           ${b.timerMode==='stopwatch'?`<span>🕐${(()=>{const t=appState.days[appState.currentDay]?.timeLog?.[b.id];return t?` ${fmtDuration(t)} today`+(b.trackTotal&&b.totalTracked?` · ${fmtDuration(b.totalTracked)} total`:''):'Stopwatch';})()}</span>`:''}
           ${b.notes?`<span style="font-size:10px;color:var(--text3)">· 📝</span>`:''}
@@ -5718,7 +5833,7 @@ function _buildCalendarManageRow(b) {
   div.id = 'manage-row-' + b.id;
   div.dataset.id = b.id;
 
-  const timeStr = b.startTime ? `<span class="time-badge">${fmt12(b.startTime)}</span>` : '';
+  const timeStr = b.startTime ? `<span class="time-badge">${fmtTime(b.startTime)}</span>` : '';
   const optStr = b.optional ? `<span class="opt-label">(optional)</span>` : '';
 
   div.innerHTML = `
@@ -5977,7 +6092,7 @@ function _buildManageRow(b) {
   div.dataset.id = b.id;
 
   const freq = freqLabel(b);
-  const timeStr = b.startTime ? `<span class="time-badge">${fmt12(b.startTime)}</span>` : '';
+  const timeStr = b.startTime ? `<span class="time-badge">${fmtTime(b.startTime)}</span>` : '';
   const optStr = b.optional ? `<span class="opt-label">(optional)</span>` : '';
   const rollStr = b.rollover ? `<span class="rollover-badge">↩</span>` : '';
 
@@ -6136,12 +6251,14 @@ function openEditorSmart() {
     return;
   }
   const h = new Date().getHours();
-  const bnd = appState.sectionBoundaries || { morningEnd:'12:00', afternoonEnd:'18:00', eveningEnd:'21:00' };
-  const [mH] = bnd.morningEnd.split(':').map(Number);
-  const [aH] = bnd.afternoonEnd.split(':').map(Number);
+  const bnd = appState.sectionBoundaries || { morningStart:'06:00', afternoonStart:'12:00', eveningStart:'18:00', nightStart:'21:00' };
+  const [mH] = bnd.afternoonStart.split(':').map(Number);
+  const [aH] = bnd.eveningStart.split(':').map(Number);
+  const [eH] = bnd.nightStart.split(':').map(Number);
   if (h < mH)       obActiveSec = 'morning';
   else if (h < aH)  obActiveSec = 'afternoon';
-  else               obActiveSec = 'evening';
+  else if (h < eH)  obActiveSec = 'evening';
+  else              obActiveSec = 'night';
   openEditor(null);
 }
 
@@ -6980,9 +7097,80 @@ function _schedTick() {
     const key = `${today}:${b.id}:${hhmm}`;
     if (_notifiedThisSession.has(key)) return;
     _notifiedThisSession.add(key);
-    playStartSound();
-    sendBlockNotification(b, 'sched-' + b.id);
+    
+    // Check if this is a persistent alarm
+    if (b.persistentAlarm) {
+      showPersistentAlarm(b);
+    } else {
+      playStartSound();
+      sendBlockNotification(b, 'sched-' + b.id);
+    }
   });
+}
+
+/* ══ PERSISTENT ALARM SYSTEM ══ */
+let _alarmSoundInterval = null;
+let _currentAlarmBlock = null;
+
+function showPersistentAlarm(block) {
+  _currentAlarmBlock = block;
+  
+  // Show overlay
+  const overlay = document.getElementById('alarm-overlay');
+  overlay.classList.add('active');
+  
+  // Set content
+  document.getElementById('alarm-emoji').textContent = block.name.match(/[\u{1F300}-\u{1F9FF}]/u)?.[0] || '⏰';
+  document.getElementById('alarm-title').textContent = 'Wake up!';
+  document.getElementById('alarm-activity').textContent = block.name;
+  document.getElementById('alarm-time').textContent = block.startTime ? `Scheduled for ${fmtTime(block.startTime)}` : '';
+  
+  // Start looping alarm sound
+  _alarmSoundInterval = setInterval(() => {
+    playStartSound();
+  }, 2000); // Ring every 2 seconds
+  
+  // Play immediate sound
+  playStartSound();
+}
+
+function dismissAlarm() {
+  // Stop sound loop
+  if (_alarmSoundInterval) {
+    clearInterval(_alarmSoundInterval);
+    _alarmSoundInterval = null;
+  }
+  
+  // Hide overlay
+  document.getElementById('alarm-overlay').classList.remove('active');
+  
+  // Mark activity as started (optional - could also just dismiss)
+  if (_currentAlarmBlock) {
+    setActive(_currentAlarmBlock.id);
+  }
+  
+  _currentAlarmBlock = null;
+}
+
+function snoozeAlarm(minutes) {
+  // Stop sound loop
+  if (_alarmSoundInterval) {
+    clearInterval(_alarmSoundInterval);
+    _alarmSoundInterval = null;
+  }
+  
+  // Hide overlay
+  document.getElementById('alarm-overlay').classList.remove('active');
+  
+  // Schedule re-trigger after snooze period
+  const block = _currentAlarmBlock;
+  _currentAlarmBlock = null;
+  
+  if (block) {
+    setTimeout(() => {
+      showPersistentAlarm(block);
+    }, minutes * 60 * 1000);
+  }
 }
 
 /* ══ SETTINGS ══ */
@@ -7056,6 +7244,194 @@ function exportData() {
   showToast('✅ Data exported successfully!');
 }
 
+function exportForAI() {
+  // Create focused export for AI planning
+  const sections = getSections();
+  const blocks = _globalBlocks();
+  const subsections = appState.subsections || [];
+  
+  const aiExport = {
+    prompt: `Hey Claude! I'm using EnterFlow to organize my day.
+
+My day is divided into these time blocks:
+${sections.map(s => `• ${s.emoji} ${s.name}: ${s.start} - ${s.end}`).join('\n')}
+
+Here's my current setup below. I'd like your help building a better routine.
+
+What are some activities I should add or changes I should make to be more productive and balanced?
+
+Let's discuss what would work best for my lifestyle, then you can create the updated JSON file for me to import.
+
+───────────────────────────────────────`,
+    
+    currentSetup: {
+      timeBlocks: sections.map(s => ({
+        id: s.id,
+        name: s.name,
+        emoji: s.emoji,
+        startTime: s.start,
+        endTime: s.end
+      })),
+      
+      activities: blocks.map(b => ({
+        id: b.id,
+        name: b.name,
+        timeBlock: b.section,
+        startTime: b.startTime || null,
+        duration: b.dur || null,
+        timerMode: b.timerMode || 'none',
+        group: b.subsectionId || null,
+        frequency: b.freq || 'daily',
+        notes: b.notes || '',
+        alarm: b.alarm !== false,
+        persistentAlarm: b.persistentAlarm || false
+      })),
+      
+      groups: subsections.map(sub => ({
+        id: sub.id,
+        name: sub.name,
+        timeBlock: sub.section
+      }))
+    },
+    
+    instructions: `
+WORKFLOW:
+1. First, ASK ME what I want to accomplish with my routine (don't assume!)
+2. Have a conversation about my goals, schedule, and preferences
+3. Make suggestions based on what I tell you
+4. ONLY AFTER we've discussed and agreed on changes, create the JSON file
+
+WHEN CREATING THE FINAL JSON FILE:
+- Use the present_files tool to create a downloadable .json file
+- Do NOT paste JSON as text in chat - it must be a downloadable file
+- IMPORTANT: Do NOT include a "sections" array in your JSON - time block settings are managed separately
+- Use this exact structure:
+
+{
+  "version": "1.0",
+  "exportDate": "2024-01-15T12:00:00.000Z",
+  "data": {
+    "days": {
+      "__template__": {
+        "blocks": [
+          {
+            "id": "morning-exercise-123",
+            "name": "Morning Exercise",
+            "section": "morning",
+            "freq": "daily",
+            "dur": 30,
+            "order": 0,
+            "timerMode": "countdown",
+            "startTime": "07:00",
+            "alarm": true,
+            "persistentAlarm": true,
+            "subsectionId": null,
+            "notes": "30 min workout to start the day"
+          }
+        ]
+      }
+    },
+    "subsections": [
+      {
+        "id": "morning-routine-456",
+        "name": "Morning Routine",
+        "section": "morning",
+        "order": 0
+      }
+    ]
+  }
+}
+
+REQUIREMENTS FOR THE JSON:
+- Each activity needs a unique ID (format: timeblock-activityname-randomnumber)
+- Valid sections: "morning", "afternoon", "evening", "night"
+- CRITICAL: Assign each activity to the correct time block based on its start time:
+  * If startTime is between Morning's start/end → section: "morning"
+  * If startTime is between Afternoon's start/end → section: "afternoon"
+  * If startTime is between Evening's start/end → section: "evening"
+  * If startTime is between Night's start/end → section: "night"
+  * Check the timeBlocks array above for the exact start/end times
+- Valid timerMode: "none", "countdown", "stopwatch"
+- Valid freq: "daily", "specific", "interval", "cycle", "once"
+- Keep existing time block boundaries unless I ask to change them
+- File must be directly importable into EnterFlow
+
+FIELD GUIDE - Understanding Each Property:
+
+**order**: Number that determines position within a time block (0 = first, 1 = second, etc.)
+  - Activities in the same time block should have sequential order values
+  - Don't skip numbers (0, 1, 2 not 0, 5, 10)
+
+**timerMode**: 
+  - "none" = no timer (default for most activities)
+  - "countdown" = fixed duration timer (use with dur field, good for focused work sessions)
+  - "stopwatch" = track how long activity takes (good for variable-length tasks)
+
+**dur**: Duration in minutes (only matters for countdown timer, but include for reference)
+
+**startTime**: Format "HH:MM" in 24-hour time (e.g., "07:30", "14:00", "23:45")
+  - Can be null if activity has no fixed time
+  - MUST match the time block it's assigned to
+
+**alarm**: true/false - plays a sound and shows notification at startTime
+  - Only works if startTime is set
+  - Default to true for activities with start times
+
+**persistentAlarm**: true/false - makes alarm loop until dismissed (for wake-up calls)
+  - Only works if alarm is true
+  - Use sparingly (only for critical things like waking up)
+
+**subsectionId**: ID of a group this activity belongs to (or null)
+  - Groups help organize related activities (e.g., "Morning Routine" group)
+  - If using groups, create them in the subsections array
+
+**freq**: 
+  - "daily" = every day (most common)
+  - "once" = single calendar date (needs pinnedDate field)
+  - "specific" = certain days of week (needs customDays array)
+  - "interval" = every N days (needs interval field)
+  - "cycle" = X days on, Y days off (needs cycleOn/cycleOff fields)
+
+**optional**: true/false - activity doesn't count toward completion percentage
+  - Use for nice-to-have activities
+
+**rollover**: true/false - if incomplete at midnight, moves to next day
+  - Use for important tasks that shouldn't be forgotten
+
+**notes**: String with any helpful details or reminders
+
+COMMON MISTAKES TO AVOID:
+- Don't use startTime "12:00pm" - use 24-hour format "12:00"
+- Don't assign "Lunch at 12:30" to "morning" if Morning ends at 12:00
+- Don't create IDs with spaces or special characters
+- Don't set persistentAlarm: true without alarm: true
+- Don't forget to increment order values within each time block
+
+Remember: Conversation FIRST, then file creation AFTER we agree!`
+  };
+  
+  // Convert to formatted text file
+  const textContent = `${aiExport.prompt}
+
+CURRENT SETUP:
+${JSON.stringify(aiExport.currentSetup, null, 2)}
+
+${aiExport.instructions}`;
+  
+  // Create blob and download
+  const blob = new Blob([textContent], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `enterflow-ai-planning-${new Date().toISOString().split('T')[0]}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  
+  showToast('🤖 AI planning file exported!');
+}
+
 function handleImportFile(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -7111,8 +7487,25 @@ function confirmImport() {
   const mode = document.querySelector('input[name="import-mode"]:checked').value;
   
   if (mode === 'replace') {
+    // Preserve section boundaries and other user settings during import
+    const currentBoundaries = appState.sectionBoundaries;
+    const currentTheme = appState.theme;
+    const currentMode = appState.mode;
+    const currentFont = appState.fontFamily;
+    
     // Replace all data
     Object.assign(appState, _importData);
+    
+    // Restore section boundaries if not provided in import
+    if (!appState.sectionBoundaries) {
+      appState.sectionBoundaries = currentBoundaries;
+    }
+    
+    // Restore theme settings if not provided
+    if (!appState.theme) appState.theme = currentTheme;
+    if (!appState.mode) appState.mode = currentMode;
+    if (!appState.fontFamily) appState.fontFamily = currentFont;
+    
     save();
     showToast('✅ Data imported! Reloading...');
     setTimeout(() => location.reload(), 1000);
@@ -7195,6 +7588,7 @@ function renderSettings() {
   document.getElementById('pref-sound-toggle')?.classList.toggle('on', !!appState.soundEnabled);
   document.getElementById('pref-notif-toggle')?.classList.toggle('on', !!appState.notificationsEnabled);
   document.getElementById('pref-advance-toggle')?.classList.toggle('on', !!appState.autoAdvance);
+  document.getElementById('24hour-toggle')?.classList.toggle('on', !!appState.use24HourTime);
   _updateNotifUI();
   _updateSettingsThemeRow();
   _updateWeatherLocUI();
@@ -7204,16 +7598,28 @@ function renderSettings() {
   const sbM = document.getElementById('sbound-morning');
   const sbA = document.getElementById('sbound-afternoon');
   const sbE = document.getElementById('sbound-evening');
-  if (sbM) sbM.value = bnd.morningEnd || '12:00';
-  if (sbA) sbA.value = bnd.afternoonEnd || '18:00';
-  if (sbE) sbE.value = bnd.eveningEnd || '21:00';
+  const sbN = document.getElementById('sbound-night');
+  if (sbM) sbM.value = bnd.morningStart || '06:00';
+  if (sbA) sbA.value = bnd.afternoonStart || '12:00';
+  if (sbE) sbE.value = bnd.eveningStart || '18:00';
+  if (sbN) sbN.value = bnd.nightStart || '21:00';
+}
+
+function toggle24Hour(toggleEl) {
+  appState.use24HourTime = !appState.use24HourTime;
+  toggleEl.classList.toggle('on', appState.use24HourTime);
+  save();
+  // Re-render to update all time displays
+  renderDash();
+  renderRoutine();
 }
 
 function saveSectionBounds() {
-  const m = document.getElementById('sbound-morning')?.value || '12:00';
-  const a = document.getElementById('sbound-afternoon')?.value || '18:00';
-  const e = document.getElementById('sbound-evening')?.value || '21:00';
-  appState.sectionBoundaries = { morningEnd: m, afternoonEnd: a, eveningEnd: e };
+  const m = document.getElementById('sbound-morning')?.value || '06:00';
+  const a = document.getElementById('sbound-afternoon')?.value || '12:00';
+  const e = document.getElementById('sbound-evening')?.value || '18:00';
+  const n = document.getElementById('sbound-night')?.value || '21:00';
+  appState.sectionBoundaries = { morningStart: m, afternoonStart: a, eveningStart: e, nightStart: n };
   save();
 }
 
@@ -7924,7 +8330,7 @@ function _emergencyReset(err) {
   // Reset appState to defaults in-place
   Object.assign(appState, {
     theme:'cosmic', mode:'dark', userName:'', onboarded:false, tutorialCompleted:false, currentDay:'',
-    sectionBoundaries:{ morningEnd:'12:00', afternoonEnd:'18:00', eveningEnd:'21:00' },
+    sectionBoundaries:{ morningStart:'06:00', afternoonStart:'12:00', eveningStart:'18:00', nightStart:'21:00' },
     subsections:[], days:{}, soundEnabled:true, notificationsEnabled:false,
     autoAdvance:true, streak:0, best:0, week:[], lastDate:null,
   });
@@ -8010,5 +8416,23 @@ window.addEventListener('load', () => {
   }, 300); // reduced from 800ms — no need to make users wait longer than the paint
 });
 </script>
+
+<!-- ════ PERSISTENT ALARM OVERLAY ════ -->
+<div id="alarm-overlay">
+  <div style="text-align:center;max-width:400px">
+    <div style="font-size:80px;margin-bottom:24px" id="alarm-emoji">⏰</div>
+    <h1 style="font-family:var(--fd);font-size:2rem;margin-bottom:12px;color:var(--text1)" id="alarm-title">Wake up!</h1>
+    <p style="font-size:1.1rem;color:var(--text2);margin-bottom:8px" id="alarm-activity"></p>
+    <p style="font-size:14px;color:var(--text3);margin-bottom:32px" id="alarm-time"></p>
+    
+    <div style="display:flex;gap:12px;justify-content:center;margin-bottom:20px">
+      <button class="btn" onclick="snoozeAlarm(5)" style="min-width:100px">Snooze 5min</button>
+      <button class="btn" onclick="snoozeAlarm(10)" style="min-width:100px">Snooze 10min</button>
+    </div>
+    
+    <button class="btn primary" onclick="dismissAlarm()" style="min-width:200px;font-size:16px;padding:14px">Dismiss</button>
+  </div>
+</div>
+
 </body>
 </html>
