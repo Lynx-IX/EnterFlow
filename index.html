@@ -4046,9 +4046,24 @@ function saveCustomTheme() {
   
   // Check if we're editing an existing theme
   const isEditing = !!window._editingThemeId;
-  const themeId = isEditing 
-    ? window._editingThemeId 
-    : 'custom-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  let themeId;
+  
+  if (isEditing) {
+    // Keep existing ID when editing
+    themeId = window._editingThemeId;
+  } else {
+    // Generate unique ID for new themes by adding timestamp
+    const baseName = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const timestamp = Date.now();
+    themeId = `custom-${baseName}-${timestamp}`;
+    
+    // Check if this ID already exists (shouldn't happen with timestamp, but just in case)
+    let counter = 1;
+    while (appState.customThemes?.[themeId]) {
+      themeId = `custom-${baseName}-${timestamp}-${counter}`;
+      counter++;
+    }
+  }
   
   const theme = generateCustomTheme(bg, card, primary, secondary, tertiary, quaternary, customThemeMode);
   
